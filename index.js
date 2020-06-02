@@ -37,8 +37,10 @@ app.use(bodyParser({limit:'1000mb'}))
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 
-app.get('/question', function (req, res){
-    res.json({real:'good'});
+app.post('/question', function (req, res){
+    console.log(req.body);
+
+    res.json({name:req.body.name});
     // id = req.params.id;
     // UserSchema.findOne({id:id}).exec(function (err, data){
     //     if(err){
