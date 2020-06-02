@@ -27,6 +27,5 @@
   "description": "",
   "scripts": {
     "start" : "node index.js",
-    "build" : "webpack"
   }
 }
