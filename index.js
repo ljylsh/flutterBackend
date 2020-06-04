@@ -20,7 +20,8 @@ var upload = multer({
 var fcm = new FCM("AAAApVcTjpQ:APA91bGLfT9_YrMLnqXweHqzgs_7Qnk7npah9MVKG7mkN0BPqvnZCC_AjsRCepnF6UUiIQwJylBsxrYAklNMXmCPg3pCoxN3sYPcpsbJr1lo6o6APSBB-lp_4WRfBXTFFkopRD9Dp83J");
 
 var tokenList = [];
-mongoose.connect('mongodb://gdrc:k3263969@localhost:27017/mathtwo');
+// mongoose.connect('mongodb://gdrc:k3263969@localhost:27017/mathtwo');
+mongoose.connect('mongodb://gdrc:k3263969@ds221292.mlab.com:21292/heroku_h9mwh8px');
 var db = mongoose.connection;
 db.on('error', console.error);
 db.once('open', function () {
