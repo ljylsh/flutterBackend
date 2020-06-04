@@ -6,22 +6,50 @@ var io = require('socket.io')(http);
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var FCM = require('fcm-node');
-
+var multer = require('multer');
+var upload = multer({
+    storage: multer.diskStorage({
+        destination: function (req, file, cb){
+            cb(null, 'uploads/');
+        },
+        filename: function (req, file, cb) {
+            cb(null, String(new Date().valueOf()) + '.jpeg');
+        }
+    }),
+});
 var fcm = new FCM("AAAApVcTjpQ:APA91bGLfT9_YrMLnqXweHqzgs_7Qnk7npah9MVKG7mkN0BPqvnZCC_AjsRCepnF6UUiIQwJylBsxrYAklNMXmCPg3pCoxN3sYPcpsbJr1lo6o6APSBB-lp_4WRfBXTFFkopRD9Dp83J");
 
 var tokenList = [];
-// mongoose.connect('mongodb://gdrc:k3263969@localhost:27017/mathtwo');
-// var db = mongoose.connection;
-// db.on('error', console.error);
-// db.once('open', function () {
+mongoose.connect('mongodb://gdrc:k3263969@localhost:27017/mathtwo');
+var db = mongoose.connection;
+db.on('error', console.error);
+db.once('open', function () {
+});
+
+// var answer = mongoose.Schema({
+//     id: String,
+//     question_id: String,
+//     imageName: String,
+//     date: Date,
 // });
-// var question = mongoose.Schema({
-//     date: 'date',
-//     id: 'string',
-//     pwd: 'string',
-//     auth: 'boolean'
-// });
-// var Question = mongoose.model('Schema', question);
+// var Answer = mongoose.model('answer', answer);
+
+var question = mongoose.Schema({
+    date: Date,
+    id: String,
+    imageName: String,
+    answers: [
+        {
+            id: String,
+            imageName: String,
+            date: Date
+        }
+    ],
+    answerType: String,
+    tutor: String,
+    price: Number
+});
+var Question = mongoose.model('question', question);
 
 io.on("connection", (userSocket) => {
     console.log('user connected');
@@ -36,21 +64,100 @@ app.use(express.static(SERVER_PATH+'static'));
 app.use(bodyParser({limit:'1000mb'}))
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
+app.use('/uploads', express.static('uploads'));
 
-app.post('/question', function (req, res){
-    console.log(req.body);
+app.get('/qna', function(req, res){
+    Question.find().exec(function (error, datas) {
+        if(error) {
+            console.log(error);
+            res.status(500).send({error:'read failed'});
+        }
+        else{
+            console.log("qna find" + datas);
+            for(i=0;i<datas.length;i++){
+                console.log(datas[i].answers.length);
+            }
+            res.json({datas});
+        }
+    })
+})
+app.get('/question', function(req, res){
+    Question.find().exec(function (error, datas) {
+        if(error) {
+            console.log(error);
+            res.status(500).send({error:'read failed'});
+        }
+        else{
+            console.log("question find" + datas);
+            res.json({datas});
+        }
+    })
+})
+// uploads 저장하기 부터 이어서
+app.post('/question', upload.single("image"), function (req, res){
+    var image = req.image;
+    var fields = req.body;
+    console.log(fields);
+    console.log("FILENAME::"+req.file.filename);
+    var newQuestion = new Question({ id: fields.id, date:new Date().getTime(), imageName: req.file.filename, answer:[], answerType: fields.answerType, tutor: fields.tutor, price: Number(fields.price) })
+    newQuestion.save(function (error, data) {
+        if(error) {
+            console.log(error);
+            res.status(500).send({error:'created failed'});
+        }
+        else {
+            console.log("saved : " + data);
+            res.status(201).send({msg:'created success'});
+        }
+    });
+})
 
-    res.json({name:req.body.name});
-    // id = req.params.id;
-    // UserSchema.findOne({id:id}).exec(function (err, data){
-    //     if(err){
-    //         console.log(err);
+app.post('/answer', upload.single("image"), function (req, res){
+    var image = req.image;
+    var fields = req.body;
+    console.log(fields.question_id);
+    var answer = {id: fields.id, date:new Date().getTime(), imageName: req.file.filename};
+    Question.findOneAndUpdate(
+        {_id: fields.question_id}, 
+        { $push: { answers : answer } },
+        function(error,success){
+            if(error){
+                console.log(error);
+            }
+            else{
+                console.log(success);
+            }
+        }    
+    );
+    // Question.findOne({_id: fields.question_id}).exec(function (error, data){
+    //     if(error){
+
     //     }
     //     else{
-    //         // console.log("DATA::"+data);
-    //         res.json({bank:data.bank, bankNumber:data.bankNumber, bankName:data.bankName});
+    //         data.answers.Push(answer);
+    //         data.save(done);
     //     }
     // })
+    // var newAnswer = new Answer();
+    // newAnswer.save(function (error, data) {
+    //     if(error) {
+    //         console.log(error);
+    //         res.status(500).send({error:'created failed'});
+    //     }
+    //     else {
+    //         console.log("saved : " + data);
+    //         res.status(201).send({msg: 'answer created success'});
+    //     }
+    // })
+    // Question.find({_id:fields.question_id}).exec(function (error, data){
+    //     if(error){
+    //         console.log(error);
+    //     }
+    //     else{
+    //         data.answer.push(newAnswer);
+    //         data.save();
+    //     }
+    // });
 })
 app.post('/token', function(req, res){
     console.log(req.body.token);
@@ -90,6 +197,7 @@ app.post('/posts', function(req, res){
 })
 
 
-http.listen(process.env.PORT || 8080, function () {
+// http.listen(process.env.PORT || 8080, function () {
+http.listen(8080, function () {
     console.log('listening on *:'+process.env.PORT);
 })
