@@ -4,6 +4,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var bodyParser = require('body-parser');
+var request = require('request');
 var mongoose = require('mongoose');
 var FCM = require('fcm-node');
 var multer = require('multer');
@@ -100,17 +101,32 @@ app.post('/question', upload.single("image"), function (req, res){
     var fields = req.body;
     console.log(fields);
     console.log("FILENAME::"+req.file.filename);
-    var newQuestion = new Question({ id: fields.id, date:new Date().getTime(), imageName: req.file.filename, answer:[], answerType: fields.answerType, tutor: fields.tutor, price: Number(fields.price) })
-    newQuestion.save(function (error, data) {
-        if(error) {
-            console.log(error);
-            res.status(500).send({error:'created failed'});
+
+    var formData = {
+        file: fs.createReadStream('testImage_2.jpg'),
+    };
+    http://34.64.181.16
+    // request.post({url:'http://34.64.181.16', formData: formData}, function optionalCallback(err, httpResponse, body) {
+    request.get({url:'http://34.64.181.16'}, function optionalCallback(err, httpResponse, body) {
+        if (err) {
+          return console.error('upload failed:', err);
         }
-        else {
-            console.log("saved : " + data);
-            res.status(201).send({msg:'created success'});
-        }
+        console.log('Upload successful!  Server responded with:', body);
+        var newQuestion = new Question({ id: fields.id, date:new Date().getTime(), imageName: req.file.filename, answer:[], answerType: fields.answerType, tutor: fields.tutor, price: Number(fields.price) })
+        newQuestion.save(function (error, data) {
+            if(error) {
+                console.log(error);
+                res.status(500).send({error:'created failed'});
+            }
+            else {
+                console.log("saved : " + data);
+                res.status(201).send({msg:body});
+            }
+        });
     });
+    
+
+    
 })
 
 app.post('/answer', upload.single("image"), function (req, res){
