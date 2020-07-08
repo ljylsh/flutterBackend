@@ -103,7 +103,7 @@ app.post('/question', upload.single("image"), function (req, res){
     console.log("FILENAME::"+req.file.filename);
 
     var formData = {
-        file: fs.createReadStream(image),
+        file: req.file,
     };
     // http://34.64.181.16
     request.post({url:'http://34.64.181.16:5000/image', formData: formData}, function optionalCallback(err, httpResponse, body) {
