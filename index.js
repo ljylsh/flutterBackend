@@ -102,12 +102,12 @@ app.post('/question', upload.single("image"), function (req, res){
     console.log(fields);
     console.log("FILENAME::"+req.file.filename);
 
-    // var formData = {
-    //     file: fs.createReadStream('testImage_2.jpg'),
-    // };
+    var formData = {
+        file: fs.createReadStream(image),
+    };
     // http://34.64.181.16
-    // request.post({url:'http://34.64.181.16', formData: formData}, function optionalCallback(err, httpResponse, body) {
-    request.get({url:'http://34.64.181.16'}, function optionalCallback(err, httpResponse, body) {
+    request.post({url:'http://34.64.181.16:5000/image', formData: formData}, function optionalCallback(err, httpResponse, body) {
+    // request.get({url:'http://34.64.181.16'}, function optionalCallback(err, httpResponse, body) {
         if (err) {
           return console.error('upload failed:', err);
         }
