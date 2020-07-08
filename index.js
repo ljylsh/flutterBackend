@@ -8,6 +8,7 @@ var request = require('request');
 var mongoose = require('mongoose');
 var FCM = require('fcm-node');
 var multer = require('multer');
+var fs = require('fs');
 var upload = multer({
     storage: multer.diskStorage({
         destination: function (req, file, cb){
@@ -103,7 +104,7 @@ app.post('/question', upload.single("image"), function (req, res){
     console.log("FILENAME::"+req.file.filename);
 
     var formData = {
-        file: req.file,
+        file: fs.createReadStream("uploads/"+req.file.filename),
     };
     // http://34.64.181.16
     request.post({url:'http://34.64.181.16:5000/image', formData: formData}, function optionalCallback(err, httpResponse, body) {
