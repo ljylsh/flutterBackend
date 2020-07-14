@@ -104,12 +104,12 @@ app.post('/image', upload.single("image"), function (req, res){
     };
 
     request.post({url:'http://34.64.181.16:5000/image', formData: formData}, function optionalCallback(err, httpResponse, body) {
-        if(err){
-            return console.error('upload failed:', err);
+        if (err) {
+          return console.error('upload failed:', err);
         }
-        console.log('image calc result:', body);
-        return 'ok';
-    })
+        console.log('Upload successful!  Server responded with:', body);
+        res.status(201).send({msg:body});
+    });
 })
 // uploads 저장하기 부터 이어서
 app.post('/question', upload.single("image"), function (req, res){
