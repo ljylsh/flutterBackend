@@ -58,11 +58,11 @@ var question = mongoose.Schema({
     sm: String,
     diff: String,
     calcTime: String,
-    sc_p: Long,
-    ye_p: Long,
-    bi_p: Long,
-    mi_p: Long,
-    sm_p: Long
+    sc_p: Number,
+    ye_p: Number,
+    bi_p: Number,
+    mi_p: Number,
+    sm_p: Number
 });
 var Question = mongoose.model('question', question);
 
