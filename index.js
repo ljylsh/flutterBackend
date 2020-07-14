@@ -50,7 +50,19 @@ var question = mongoose.Schema({
     ],
     answerType: String,
     tutor: String,
-    price: Number
+    price: Number,
+    sc: String,
+    ye: String,
+    bi: String,
+    mi: String,
+    sm: String,
+    diff: String,
+    calcTime: String,
+    sc_p: Long,
+    ye_p: Long,
+    bi_p: Long,
+    mi_p: Long,
+    sm_p: Long
 });
 var Question = mongoose.model('question', question);
 
@@ -122,24 +134,20 @@ app.post('/question', upload.single("image"), function (req, res){
         file: fs.createReadStream("uploads/"+req.file.filename),
     };
     // http://34.64.181.16
-    request.post({url:'http://34.64.181.16:5000/image', formData: formData}, function optionalCallback(err, httpResponse, body) {
-    // request.get({url:'http://34.64.181.16'}, function optionalCallback(err, httpResponse, body) {
-        if (err) {
-          return console.error('upload failed:', err);
+    
+    var newQuestion = new Question({ id: fields.id, date:new Date().getTime(), imageName: req.file.filename, answer:[], answerType: fields.answerType, tutor: fields.tutor, price: Number(fields.price),
+    sc: fields.sc, ye: fields.ye, bi: fields.bi, mi:fields.mi, sm: fields.sm, diff: fields.diff, calcTime: fields.calcTime, sc_p: fields.sc_p, ye_p: fields.ye_p, bi_p: fields.bi_p, mi_p:fields.mi_p, sm_p:fields.sm_p })
+    newQuestion.save(function (error, data) {
+        if(error) {
+            console.log(error);
+            res.status(500).send({error:'created failed'});
         }
-        console.log('Upload successful!  Server responded with:', body);
-        var newQuestion = new Question({ id: fields.id, date:new Date().getTime(), imageName: req.file.filename, answer:[], answerType: fields.answerType, tutor: fields.tutor, price: Number(fields.price) })
-        newQuestion.save(function (error, data) {
-            if(error) {
-                console.log(error);
-                res.status(500).send({error:'created failed'});
-            }
-            else {
-                console.log("saved : " + data);
-                res.status(201).send({msg:body});
-            }
-        });
+        else {
+            console.log("saved : " + data);
+            res.status(201).send({msg:body});
+        }
     });
+    
     
 
     
