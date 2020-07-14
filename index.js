@@ -144,7 +144,7 @@ app.post('/question', upload.single("image"), function (req, res){
         }
         else {
             console.log("saved : " + data);
-            res.status(201).send({msg:body});
+            res.status(201).send({data: data});
         }
     });
     
