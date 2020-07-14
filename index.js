@@ -96,6 +96,20 @@ app.get('/question', function(req, res){
         }
     })
 })
+app.post('/image', upload.single("image"), function (req, res){
+    var image = req.image;
+    var formData = {
+        file: fs.createReadStream("uploads/"+req.file.filename),
+    };
+
+    request.post({url:'http://34.64.181.16:5000/image', formData: formData}, function optionalCallback(err, httpResponse, body) {
+        if(err){
+            return console.error('upload failed:', err);
+        }
+        console.log('image calc result:', body);
+        return 'ok';
+    })
+})
 // uploads 저장하기 부터 이어서
 app.post('/question', upload.single("image"), function (req, res){
     var image = req.image;
