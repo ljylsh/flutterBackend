@@ -97,6 +97,7 @@ app.get('/question', function(req, res){
     })
 })
 app.post('/image', upload.single("image"), function (req, res){
+    console.log(" I AM IN IMAGE POST REQUEST");
     var image = req.image;
     var formData = {
         file: fs.createReadStream("uploads/"+req.file.filename),
