@@ -126,8 +126,8 @@ app.post('/image', upload.single("image"), function (req, res){
     });
 })
 app.get('/simillarQuestion', function(req, res){
-    var sim_x = req.sim_x;
-    var sim_y = req.sim_y;
+    var sim_x = req.query.sim_x;
+    var sim_y = req.query.sim_y;
     console.log(sim_x);
     console.log(sim_y);
     console.log("end of simillarQuestion");
