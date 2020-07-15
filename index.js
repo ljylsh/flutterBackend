@@ -138,7 +138,7 @@ app.get('/simillarQuestion', function(req, res){
     console.log(sim_y);
     console.log("end of simillarQuestion");
     // 동일 문항 찾기
-    Question.find({sim_x=sim_x, sim_y=sim_y}).exec(function (error, data){
+    Question.find({sim_x:sim_x, sim_y:sim_y}).exec(function (error, data){
         if(error){
             console.log(error);
         }
