@@ -162,10 +162,11 @@ app.post('/answer', upload.single("image"), function (req, res){
         function(error,success){
             if(error){
                 console.log(error);
+                res.status(500).send({data: error});
             }
             else{
                 console.log(success);
-                return success;
+                res.status(201).send({data: success});
             }
         }    
     );
