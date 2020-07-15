@@ -137,14 +137,22 @@ app.get('/simillarQuestion', function(req, res){
     console.log(sim_x);
     console.log(sim_y);
     console.log("end of simillarQuestion");
+
     // 동일 문항 찾기
-    Question.find({sim_x:sim_x, sim_y:sim_y}).exec(function (error, data){
+    Question.find({sim_x:sim_x, sim_y:sim_y, sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:diff}).exec(function (error, data){
         if(error){
             console.log(error);
         }
         else{
+            let answers = [];
+            for(i=0;i<data.length;i++){
+                for(j=0;j<data[i].answers.length;j++){
+                    answers.push(data[i].answers[j]);
+                }
+            }
             console.log("QUESTION FOUND SAME")
-            console.log(data);
+            console.log(answers);
+            res.status(200).send({data:answers});
         }
     })
     // 유사 문항 찾기
@@ -157,7 +165,7 @@ app.get('/simillarQuestion', function(req, res){
     //             data.save();
     //         }
     //     });
-    res.status(200).send({data:"OK"});
+    
 })
 // uploads 저장하기 부터 이어서
 app.post('/question', upload.single("image"), function (req, res){
