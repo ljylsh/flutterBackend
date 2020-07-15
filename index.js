@@ -122,11 +122,16 @@ app.post('/image', upload.single("image"), function (req, res){
           return console.error('upload failed:', err);
         }
         console.log('Upload successful!  Server responded with:', body);
-        console.log(body.sim_x);
-        console.log(body.sim_y);
-        console.log("SIM PRINT");
         res.status(201).send({msg:body});
     });
+})
+app.get('/simillarQuestion', function(req, res){
+    var sim_x = req.sim_x;
+    var sim_y = req.sim_y;
+    console.log(sim_x);
+    console.log(sim_y);
+    console.log("end of simillarQuestion");
+    res.status(200).send({"OK"});
 })
 // uploads 저장하기 부터 이어서
 app.post('/question', upload.single("image"), function (req, res){
