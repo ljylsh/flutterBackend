@@ -137,6 +137,26 @@ app.get('/simillarQuestion', function(req, res){
     console.log(sim_x);
     console.log(sim_y);
     console.log("end of simillarQuestion");
+    // 동일 문항 찾기
+    Question.find({sim_x=sim_x, sim_y=sim_y}).exec(function (error, data){
+        if(error){
+            console.log(error);
+        }
+        else{
+            console.log("QUESTION FOUND SAME")
+            console.log(data);
+        }
+    })
+    // 유사 문항 찾기
+    // Question.find({sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff: diff}).exec(function (error, data){
+    //         if(error){
+    //             console.log(error);
+    //         }
+    //         else{
+    //             data.answer.push(newAnswer);
+    //             data.save();
+    //         }
+    //     });
     res.status(200).send({data:"OK"});
 })
 // uploads 저장하기 부터 이어서
