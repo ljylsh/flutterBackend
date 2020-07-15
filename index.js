@@ -131,7 +131,7 @@ app.get('/simillarQuestion', function(req, res){
     console.log(sim_x);
     console.log(sim_y);
     console.log("end of simillarQuestion");
-    res.status(200).send({"OK"});
+    res.status(200).send({data:"OK"});
 })
 // uploads 저장하기 부터 이어서
 app.post('/question', upload.single("image"), function (req, res){
