@@ -128,6 +128,12 @@ app.post('/image', upload.single("image"), function (req, res){
 app.get('/simillarQuestion', function(req, res){
     var sim_x = req.query.sim_x;
     var sim_y = req.query.sim_y;
+    var sc = req.query.sc;
+    var ye = req.query.ye;
+    var bi = req.query.bi;
+    var mi = req.query.mi;
+    var sm = req.query.sm;
+    var diff = req.query.diff;
     console.log(sim_x);
     console.log(sim_y);
     console.log("end of simillarQuestion");
