@@ -62,7 +62,9 @@ var question = mongoose.Schema({
     ye_p: Number,
     bi_p: Number,
     mi_p: Number,
-    sm_p: Number
+    sm_p: Number,
+    sim_x: Number,
+    sim_y: Number
 });
 var Question = mongoose.model('question', question);
 
@@ -136,7 +138,7 @@ app.post('/question', upload.single("image"), function (req, res){
     // http://34.64.181.16
     
     var newQuestion = new Question({ id: fields.id, date:new Date().getTime(), imageName: req.file.filename, answer:[], answerType: fields.answerType, tutor: fields.tutor, price: Number(fields.price),
-    sc: fields.sc, ye: fields.ye, bi: fields.bi, mi:fields.mi, sm: fields.sm, diff: fields.diff, calcTime: fields.calcTime, sc_p: fields.sc_p, ye_p: fields.ye_p, bi_p: fields.bi_p, mi_p:fields.mi_p, sm_p:fields.sm_p })
+    sc: fields.sc, ye: fields.ye, bi: fields.bi, mi:fields.mi, sm: fields.sm, diff: fields.diff, calcTime: fields.calcTime, sc_p: fields.sc_p, ye_p: fields.ye_p, bi_p: fields.bi_p, mi_p:fields.mi_p, sm_p:fields.sm_p, sim_x:fields.sim_x, sim_y:fields.sim_y })
     newQuestion.save(function (error, data) {
         if(error) {
             console.log(error);
@@ -147,10 +149,6 @@ app.post('/question', upload.single("image"), function (req, res){
             res.status(201).send({data: data});
         }
     });
-    
-    
-
-    
 })
 
 app.post('/answer', upload.single("image"), function (req, res){
@@ -167,6 +165,7 @@ app.post('/answer', upload.single("image"), function (req, res){
             }
             else{
                 console.log(success);
+                return success;
             }
         }    
     );
