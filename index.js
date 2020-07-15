@@ -122,9 +122,9 @@ app.post('/image', upload.single("image"), function (req, res){
           return console.error('upload failed:', err);
         }
         console.log('Upload successful!  Server responded with:', body);
-        print(body.msg.sim_x);
-        print(body.msg.sim_y);
-        print("SIM PRINT");
+        console.log(body.sim_x);
+        console.log(body.sim_y);
+        console.log("SIM PRINT");
         res.status(201).send({msg:body});
     });
 })
