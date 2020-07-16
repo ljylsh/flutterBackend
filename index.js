@@ -137,6 +137,8 @@ app.get('/simillarQuestion', function(req, res){
     console.log(sim_x);
     console.log(sim_y);
     console.log("end of simillarQuestion");
+    
+    // ViewAnswer로 넘어갈 때 답변 정보 및 가격 등 데이터 토스 필요함.
 
     // 동일 문항 찾기
     Question.find({sim_x:sim_x, sim_y:sim_y, sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:diff}).exec(function (error, data){
@@ -144,19 +146,16 @@ app.get('/simillarQuestion', function(req, res){
             console.log(error);
         }
         else{
-            let answers = [];
-            for(i=0;i<data.length;i++){
-                console.log(data[i]);
-                for(j=0;j<data[i].answers.length;j++){
-                    data[i].answers[j]['question_id'] = data[i]._id;
-                    data[i].answers[j].price = data[i].price;
-                    console.log(data[i].answers[j]);
-                    answers.push(data[i].answers[j]);
-                }
-            }
-            console.log("QUESTION FOUND SAME")
-            console.log(answers);
-            res.status(200).send({data:answers});
+            // let answers = [];
+            // for(i=0;i<data.length;i++){
+            //     console.log(data[i]);
+            //     for(j=0;j<data[i].answers.length;j++){
+            //         answers.push(data[i].answers[j]);
+            //     }
+            // }
+            // console.log("QUESTION FOUND SAME")
+            // console.log(answers);
+            res.status(200).send({data:data});
         }
     })
     // 유사 문항 찾기
