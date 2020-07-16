@@ -148,8 +148,9 @@ app.get('/simillarQuestion', function(req, res){
             for(i=0;i<data.length;i++){
                 console.log(data[i]);
                 for(j=0;j<data[i].answers.length;j++){
-                    data[i].answers[j].question_id = data[i]._id;
+                    data[i].answers[j]['question_id'] = data[i]._id;
                     data[i].answers[j].price = data[i].price;
+                    console.log(data[i].answers[j]);
                     answers.push(data[i].answers[j]);
                 }
             }
