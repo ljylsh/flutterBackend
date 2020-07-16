@@ -125,7 +125,7 @@ app.post('/image', upload.single("image"), function (req, res){
         res.status(201).send({msg:body});
     });
 })
-app.get('/simillarQuestion', function(req, res){
+app.get('/findSameQuestion', function(req, res){
     var sim_x = req.query.sim_x;
     var sim_y = req.query.sim_y;
     var sc = req.query.sc;
