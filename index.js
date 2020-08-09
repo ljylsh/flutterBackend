@@ -36,6 +36,25 @@ db.once('open', function () {
 //     date: Date,
 // });
 // var Answer = mongoose.model('answer', answer);
+var user = mongoose.Schema({
+    id: String,
+    password: String,
+    name: String,
+    bornYear: Number,
+    address: String,
+    bankName: String,
+    bankNumber: String,
+    tel0: Number,
+    tel1: Number,
+    tel2: Number,
+    tutor: [],
+    favoriteCategory: [],
+    point: Number,
+    pointHistory: [],
+    review: [],
+    channelIntroduction: String,
+})
+var User = mongoose.model('user', user);
 
 var question = mongoose.Schema({
     date: Date,
@@ -83,35 +102,57 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.use('/uploads', express.static('uploads'));
 
-app.get('/qna', function(req, res){
-    Question.find().exec(function (error, datas) {
-        if(error) {
+// 회원가입
+app.post('/user', function(req, res){
+    var newUser = new User({
+        id: fields.id,
+        password: fields.password,
+        name: fields.name,
+        bornYear: fields.bornYear,
+        address: fields.address,
+        bankName: fields.bankName,
+        bankNumber: fields.bankNumber,
+        tel0: fields.tel0,
+        tel1: fields.tel1,
+        tel2: fields.tel2,
+        point: 0,
+    });
+    newUser.save(function (error, data) {
+        if(error){
             console.log(error);
-            res.status(500).send({error:'read failed'});
+            res.status(500).send({error:'user created failed'});
         }
         else{
-            console.log("qna find" + datas);
-            for(i=0;i<datas.length;i++){
-                console.log(datas[i].answers.length);
+            console.log("saved : " + data);
+            res.status(201).send({data: data});
+        }
+    })
+})
+// 로그인
+app.post('/user/:id', function(req, res){
+    User.findOne({id: req.params.id}).exec(function (error, data){
+        if(error){
+            console.log(error);
+            res.status(500).send({error:'cannot find id', code: 'id'});
+        }
+        else{
+            if(data.password == fields.password){
+                res.status(200).send({user: data});
             }
-            res.json({datas});
+            else{
+                res.status(500).send({error:'password incorrect', code: 'password'});
+            }
         }
     })
 })
-app.get('/question', function(req, res){
-    Question.find().exec(function (error, datas) {
-        if(error) {
-            console.log(error);
-            res.status(500).send({error:'read failed'});
-        }
-        else{
-            console.log("question find" + datas);
-            res.json({datas});
-        }
-    })
-})
-app.post('/image', upload.single("image"), function (req, res){
-    console.log(" I AM IN IMAGE POST REQUEST");
+
+// 새로운 질문에 대한 알람 기능은 FCM으로 진행하는게 맞을 듯.
+// 새로운 문제가 나올 때 마다 해당하는 관심 카테고리의 튜터들에게 FCM PUSH를 보내고, 
+// 접속 시에 question별 transaction을 체크 해 관심 카테고리 영역 내에 transaction이 걸리지 않은 (즉, 답변을 누군가가 달고 있거나 이미 달리지 않은) 문제가 있을 경우 알람에 NEW를 띄워주게끔.
+
+// AI SERVER로 문제에 대한 카테고리 분류 정보 획득
+app.post('/inferenceImage', upload.single("image"), function (req, res){
+    console.log("inferenceImage");
     var image = req.image;
     var formData = {
         file: fs.createReadStream("uploads/"+req.file.filename),
@@ -125,6 +166,8 @@ app.post('/image', upload.single("image"), function (req, res){
         res.status(201).send({msg:body});
     });
 })
+
+// 문제 촬영 시 동일한 문제가 있는지 확인하고, return
 app.get('/findSameQuestion', function(req, res){
     var sim_x = req.query.sim_x;
     var sim_y = req.query.sim_y;
@@ -134,43 +177,19 @@ app.get('/findSameQuestion', function(req, res){
     var mi = req.query.mi;
     var sm = req.query.sm;
     var diff = req.query.diff;
-    console.log(sim_x);
-    console.log(sim_y);
-    console.log("end of simillarQuestion");
     
-    // ViewAnswer로 넘어갈 때 답변 정보 및 가격 등 데이터 토스 필요함.
-
     // 동일 문항 찾기
     Question.find({sim_x:sim_x, sim_y:sim_y, sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:diff}).exec(function (error, data){
         if(error){
             console.log(error);
         }
         else{
-            // let answers = [];
-            // for(i=0;i<data.length;i++){
-            //     console.log(data[i]);
-            //     for(j=0;j<data[i].answers.length;j++){
-            //         answers.push(data[i].answers[j]);
-            //     }
-            // }
-            // console.log("QUESTION FOUND SAME")
-            // console.log(answers);
             res.status(200).send({data:data});
         }
     })
-    // 유사 문항 찾기
-    // Question.find({sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff: diff}).exec(function (error, data){
-    //         if(error){
-    //             console.log(error);
-    //         }
-    //         else{
-    //             data.answer.push(newAnswer);
-    //             data.save();
-    //         }
-    //     });
-    
 })
-// uploads 저장하기 부터 이어서
+
+// 새로운 질문 등록
 app.post('/question', upload.single("image"), function (req, res){
     var image = req.image;
     var fields = req.body;
@@ -180,7 +199,6 @@ app.post('/question', upload.single("image"), function (req, res){
     var formData = {
         file: fs.createReadStream("uploads/"+req.file.filename),
     };
-    // http://34.64.181.16
     
     var newQuestion = new Question({ id: fields.id, date:new Date().getTime(), imageName: req.file.filename, answer:[], answerType: fields.answerType, tutor: fields.tutor, price: Number(fields.price),
     sc: fields.sc, ye: fields.ye, bi: fields.bi, mi:fields.mi, sm: fields.sm, diff: fields.diff, calcTime: fields.calcTime, sc_p: fields.sc_p, ye_p: fields.ye_p, bi_p: fields.bi_p, mi_p:fields.mi_p, sm_p:fields.sm_p, sim_x:fields.sim_x, sim_y:fields.sim_y })
@@ -196,6 +214,7 @@ app.post('/question', upload.single("image"), function (req, res){
     });
 })
 
+// 질문에 새로운 답변 등록
 app.post('/answer', upload.single("image"), function (req, res){
     var image = req.image;
     var fields = req.body;
@@ -215,36 +234,38 @@ app.post('/answer', upload.single("image"), function (req, res){
             }
         }    
     );
-    // Question.findOne({_id: fields.question_id}).exec(function (error, data){
-    //     if(error){
-
-    //     }
-    //     else{
-    //         data.answers.Push(answer);
-    //         data.save(done);
-    //     }
-    // })
-    // var newAnswer = new Answer();
-    // newAnswer.save(function (error, data) {
-    //     if(error) {
-    //         console.log(error);
-    //         res.status(500).send({error:'created failed'});
-    //     }
-    //     else {
-    //         console.log("saved : " + data);
-    //         res.status(201).send({msg: 'answer created success'});
-    //     }
-    // })
-    // Question.find({_id:fields.question_id}).exec(function (error, data){
-    //     if(error){
-    //         console.log(error);
-    //     }
-    //     else{
-    //         data.answer.push(newAnswer);
-    //         data.save();
-    //     }
-    // });
 })
+
+// app.get('/qna', function(req, res){
+//     Question.find().exec(function (error, datas) {
+//         if(error) {
+//             console.log(error);
+//             res.status(500).send({error:'read failed'});
+//         }
+//         else{
+//             console.log("qna find" + datas);
+//             for(i=0;i<datas.length;i++){
+//                 console.log(datas[i].answers.length);
+//             }
+//             res.json({datas});
+//         }
+//     })
+// })
+// app.get('/question', function(req, res){
+//     Question.find().exec(function (error, datas) {
+//         if(error) {
+//             console.log(error);
+//             res.status(500).send({error:'read failed'});
+//         }
+//         else{
+//             console.log("question find" + datas);
+//             res.json({datas});
+//         }
+//     })
+// })
+
+
+// FCM PUSH를 위한 token 수집
 app.post('/token', function(req, res){
     console.log(req.body.token);
     hasToken = false;
@@ -256,7 +277,8 @@ app.post('/token', function(req, res){
     if(! hasToken)
         tokenList.push(req.body.token);
 })
-app.post('/posts', function(req, res){
+// FCM PUSH 메세지 보내기
+app.post('/fcm', function(req, res){
     console.log('앱 통신 확인 완료');
     // console.log(req.body);
     for(i=0;i<tokenList.length;i++){
