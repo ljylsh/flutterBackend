@@ -104,6 +104,7 @@ app.use('/uploads', express.static('uploads'));
 
 // 회원가입
 app.post('/user', function(req, res){
+    fields = req.fields;
     var newUser = new User({
         id: fields.id,
         password: fields.password,
