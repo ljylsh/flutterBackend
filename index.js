@@ -143,7 +143,12 @@ app.post('/user/:id', function(req, res){
         }
         else{
             console.log(data);
-            res.status(200).send({user: data});
+            if(data){
+                res.status(200).send({user: data});
+            }
+            else{
+                res.status(500).send({error:'cannot match id/password', code: 'id'});
+            }
         }
     })
 })
