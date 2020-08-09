@@ -44,7 +44,7 @@ var user = mongoose.Schema({
     address: String,
     bankName: String,
     bankNumber: String,
-    tel0: Number,
+    tel0: String,
     tel1: Number,
     tel2: Number,
     tutor: [],
@@ -104,7 +104,9 @@ app.use('/uploads', express.static('uploads'));
 
 // 회원가입
 app.post('/user', function(req, res){
-    fields = req.fields;
+    
+    fields = req.body;
+    console.log(fields);
     var newUser = new User({
         id: fields.id,
         password: fields.password,
@@ -131,18 +133,17 @@ app.post('/user', function(req, res){
 })
 // 로그인
 app.post('/user/:id', function(req, res){
-    User.findOne({id: req.params.id}).exec(function (error, data){
+    fields = req.body;
+    console.log(req.params.id);
+    console.log(fields.password);
+    User.findOne({id: req.params.id, password: req.body.password}).exec(function (error, data){
         if(error){
             console.log(error);
             res.status(500).send({error:'cannot find id', code: 'id'});
         }
         else{
-            if(data.password == fields.password){
-                res.status(200).send({user: data});
-            }
-            else{
-                res.status(500).send({error:'password incorrect', code: 'password'});
-            }
+            console.log(data);
+            res.status(200).send({user: data});
         }
     })
 })
@@ -308,5 +309,5 @@ app.post('/fcm', function(req, res){
 
 http.listen(process.env.PORT || 8080, function () {
 // http.listen(8080, function () {
-    console.log('listening on *:'+process.env.PORT);
+    console.log('listening on *:'+process.env.PORT || 8080);
 })
