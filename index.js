@@ -44,9 +44,7 @@ var user = mongoose.Schema({
     address: String,
     bankName: String,
     bankNumber: String,
-    tel0: String,
-    tel1: Number,
-    tel2: Number,
+    tel: String,
     tutor: [],
     favoriteCategory: [],
     point: Number,
@@ -102,6 +100,20 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.use('/uploads', express.static('uploads'));
 
+var bank=[];
+bank.push({code:'001', name:'은행테스트1'});
+bank.push({code:'002', name:'은행테스트2'});
+bank.push({code:'003', name:'은행테스트3'});
+
+app.get('/bank', function(req, res){
+    res.send(bank);
+})
+
+app.get('/terms', function(req, res){
+    fs.readFile('terms.txt', 'utf8', function(err, data){
+        res.send(data);
+    })
+})
 // 회원가입
 app.post('/user', function(req, res){
     
@@ -115,9 +127,7 @@ app.post('/user', function(req, res){
         address: fields.address,
         bankName: fields.bankName,
         bankNumber: fields.bankNumber,
-        tel0: fields.tel0,
-        tel1: fields.tel1,
-        tel2: fields.tel2,
+        tel: fields.tel,
         point: 0,
     });
     newUser.save(function (error, data) {
