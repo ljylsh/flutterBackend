@@ -229,6 +229,16 @@ app.get('/findSimillarQuestion', function(req, res){
     })
 })
 
+app.get('/question', function(req, res){
+    Question.find({}).exec(function (error, data){
+        if(error){
+            console.log(error);
+        }
+        else{
+            res.status(200).send({data:data});
+        }
+    })
+})
 // 새로운 질문 등록
 app.post('/question', upload.single("image"), function (req, res){
     var image = req.image;
