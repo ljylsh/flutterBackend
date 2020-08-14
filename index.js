@@ -66,6 +66,19 @@ var question = mongoose.Schema({
         }
     ],
     answerType: String,
+    contents: [
+        {
+            fileName: String,
+            text: String,
+            likes: [{id:String}],
+            comments: [{
+                id:String,
+                text: String,
+                date: Date
+            }],
+            date: Date,
+        }
+    ],
     tutor: String,
     price: Number,
     sc: String,
@@ -104,14 +117,49 @@ var bank=[];
 bank.push({code:'001', name:'은행테스트1'});
 bank.push({code:'002', name:'은행테스트2'});
 bank.push({code:'003', name:'은행테스트3'});
-
 app.get('/bank', function(req, res){
     res.send(bank);
+})
+
+var answer=[];
+answer.push({code:'001', name:'문제해설지'});
+answer.push({code:'002', name:'문제풀이동영상'});
+answer.push({code:'003', name:'화상과외'});
+app.get('/answer-type', function(req, res){
+    res.send(answer);
 })
 
 app.get('/terms', function(req, res){
     fs.readFile('terms.txt', 'utf8', function(err, data){
         res.send(data);
+    })
+})
+
+app.get('/content/tutor/:id', function(req, res){
+    var id = req.params.id;
+// 최신 컨텐츠 부분 상단 DB Schema 참조하여 코딩할것.
+
+    // 해당 ID의 튜터 목록을 조회.
+    // 조회 후 해당 튜터들의 컨텐츠를 Date 최신순으로 5개 받아오기.
+    // params로 Count를 받아, 스크롤 추가 할 시 Count 더 해서 잘라 return하기.
+    // 현재는 그냥 임의의 Video 돌려주기.
+})
+
+app.get('/user/validation/:id', function(req, res){
+    User.findOne({id:req.params.id}).exec(function (error, data){
+        if(error){
+            console.log(error);
+            res.send({error: error});
+        }
+        else{
+            console.log(data);
+            if(data){
+                res.status(409).send({msg:'ID exists', code:'409'});
+            }
+            else{
+                res.status(200).send({msg:'ID not exists', code:'200'});
+            }
+        }
     })
 })
 // 회원가입
@@ -125,7 +173,7 @@ app.post('/user', function(req, res){
         name: fields.name,
         bornYear: fields.bornYear,
         address: fields.address,
-        bankName: fields.bankName,
+        bankCode: fields.bankCode,
         bankNumber: fields.bankNumber,
         tel: fields.tel,
         point: 0,
@@ -184,7 +232,7 @@ app.post('/inferenceImage', upload.single("image"), function (req, res){
     });
 })
 
-// 문제 촬영 시 동일한 문제가 있는지 확인하고, return
+// 동일 문항 찾기
 app.get('/question/same', function(req, res){
     var sim_x = req.query.sim_x;
     var sim_y = req.query.sim_y;
@@ -195,7 +243,6 @@ app.get('/question/same', function(req, res){
     var sm = req.query.sm;
     var diff = req.query.diff;
     
-    // 동일 문항 찾기
     Question.find({sim_x:sim_x, sim_y:sim_y, sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:diff}).exec(function (error, data){
         if(error){
             console.log(error);
@@ -207,6 +254,7 @@ app.get('/question/same', function(req, res){
     })
 })
 
+// 유사 문항 찾기
 app.get('/question/simillar', function(req, res){
     var sim_x = req.query.sim_x;
     var sim_y = req.query.sim_y;
@@ -217,7 +265,6 @@ app.get('/question/simillar', function(req, res){
     var sm = req.query.sm;
     var diff = req.query.diff;
     
-    // 유사 문항 찾기
     Question.find({sim_x:sim_x, sim_y:sim_y, sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:diff}).exec(function (error, data){
         if(error){
             console.log(error);
@@ -229,6 +276,7 @@ app.get('/question/simillar', function(req, res){
     })
 })
 
+// 전체 질문보기 조회
 app.get('/question', function(req, res){
     Question.find({}).exec(function (error, data){
         if(error){
@@ -240,6 +288,7 @@ app.get('/question', function(req, res){
     })
 })
 
+// 관심 카테고리 내 미답변 상태의 질문 목록 조회
 app.get('/question/unanswerd', function (req, res){
     var f = req.query;
     // 관심 카테고리 array
