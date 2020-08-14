@@ -15,7 +15,7 @@ var upload = multer({
             cb(null, 'uploads/');
         },
         filename: function (req, file, cb) {
-            cb(null, String(new Date().valueOf()) + '.jpeg');
+            cb(null, String(new Date().valueOf()) + file.originalname);
         }
     }),
 });
@@ -37,7 +37,7 @@ db.once('open', function () {
 // });
 // var Answer = mongoose.model('answer', answer);
 var user = mongoose.Schema({
-    id: String,
+    id: {type: String, unique: true},
     password: String,
     name: String,
     bornYear: Number,
@@ -61,7 +61,7 @@ var question = mongoose.Schema({
     answers: [
         {
             id: String,
-            imageName: String,
+            fileName: String,
             date: Date
         }
     ],
@@ -164,7 +164,6 @@ app.get('/user/validation/:id', function(req, res){
 })
 // 회원가입
 app.post('/user', function(req, res){
-    
     fields = req.body;
     console.log(fields);
     var newUser = new User({
@@ -185,7 +184,7 @@ app.post('/user', function(req, res){
         }
         else{
             console.log("saved : " + data);
-            res.status(201).send({data: data});
+            res.status(201).send({status: '201'});
         }
     })
 })
@@ -327,11 +326,11 @@ app.post('/question', upload.single("image"), function (req, res){
 })
 
 // 질문에 새로운 답변 등록
-app.post('/answer', upload.single("image"), function (req, res){
-    var image = req.image;
+app.post('/answer', upload.single("file"), function (req, res){
+    var file = req.file;
     var fields = req.body;
     console.log(fields.question_id);
-    var answer = {id: fields.id, date:new Date().getTime(), imageName: req.file.filename};
+    var answer = {id: fields.id, date:new Date().getTime(), fileName: req.file.filename};
     Question.findOneAndUpdate(
         {_id: fields.question_id}, 
         { $push: { answers : answer } },
