@@ -199,6 +199,29 @@ app.get('/findSameQuestion', function(req, res){
     Question.find({sim_x:sim_x, sim_y:sim_y, sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:diff}).exec(function (error, data){
         if(error){
             console.log(error);
+            res.status(500).send({err:error})
+        }
+        else{
+            res.status(200).send({data:data});
+        }
+    })
+})
+
+app.get('/findSimillarQuestion', function(req, res){
+    var sim_x = req.query.sim_x;
+    var sim_y = req.query.sim_y;
+    var sc = req.query.sc;
+    var ye = req.query.ye;
+    var bi = req.query.bi;
+    var mi = req.query.mi;
+    var sm = req.query.sm;
+    var diff = req.query.diff;
+    
+    // 유사 문항 찾기
+    Question.find({sim_x:sim_x, sim_y:sim_y, sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:diff}).exec(function (error, data){
+        if(error){
+            console.log(error);
+            res.status(500).send({err:error})
         }
         else{
             res.status(200).send({data:data});
@@ -217,7 +240,7 @@ app.post('/question', upload.single("image"), function (req, res){
         file: fs.createReadStream("uploads/"+req.file.filename),
     };
     
-    var newQuestion = new Question({ id: fields.id, date:new Date().getTime(), imageName: req.file.filename, answer:[], answerType: fields.answerType, tutor: fields.tutor, price: Number(fields.price),
+    var newQuestion = new Question({ id: fields.id, date:new Date().getTime(), imageName: req.file.filename, answer:[], answerType: fields.answerType, price: Number(fields.price),
     sc: fields.sc, ye: fields.ye, bi: fields.bi, mi:fields.mi, sm: fields.sm, diff: fields.diff, calcTime: fields.calcTime, sc_p: fields.sc_p, ye_p: fields.ye_p, bi_p: fields.bi_p, mi_p:fields.mi_p, sm_p:fields.sm_p, sim_x:fields.sim_x, sim_y:fields.sim_y })
     newQuestion.save(function (error, data) {
         if(error) {
@@ -243,7 +266,7 @@ app.post('/answer', upload.single("image"), function (req, res){
         function(error,success){
             if(error){
                 console.log(error);
-                res.status(500).send({data: error});
+                res.status(500).send({error: error});
             }
             else{
                 console.log(success);
