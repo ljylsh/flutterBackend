@@ -185,7 +185,7 @@ app.post('/inferenceImage', upload.single("image"), function (req, res){
 })
 
 // 문제 촬영 시 동일한 문제가 있는지 확인하고, return
-app.get('/findSameQuestion', function(req, res){
+app.get('/question/same', function(req, res){
     var sim_x = req.query.sim_x;
     var sim_y = req.query.sim_y;
     var sc = req.query.sc;
@@ -207,7 +207,7 @@ app.get('/findSameQuestion', function(req, res){
     })
 })
 
-app.get('/findSimillarQuestion', function(req, res){
+app.get('/question/simillar', function(req, res){
     var sim_x = req.query.sim_x;
     var sim_y = req.query.sim_y;
     var sc = req.query.sc;
@@ -238,6 +238,14 @@ app.get('/question', function(req, res){
             res.status(200).send({data:data});
         }
     })
+})
+
+app.get('/question/unanswerd', function (req, res){
+    var f = req.query;
+    // 관심 카테고리 array
+    var sc = f.sc;
+    
+
 })
 // 새로운 질문 등록
 app.post('/question', upload.single("image"), function (req, res){
