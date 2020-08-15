@@ -45,7 +45,7 @@ var user = mongoose.Schema({
     bankName: String,
     bankNumber: String,
     tel: String,
-    tutor: [],
+    tutor: [{type: String, unique: true}],
     favoriteCategory: [],
     point: Number,
     pointHistory: [],
@@ -122,9 +122,9 @@ app.get('/bank', function(req, res){
 })
 
 var answer=[];
-answer.push({code:'001', name:'문제해설지'});
-answer.push({code:'002', name:'문제풀이동영상'});
-answer.push({code:'003', name:'화상과외'});
+answer.push({code:'001', name:'문제해설지', price:500});
+answer.push({code:'002', name:'문제풀이동영상', price:1000});
+answer.push({code:'003', name:'화상과외', price:2000});
 app.get('/answer-type', function(req, res){
     res.send(answer);
 })
@@ -276,8 +276,19 @@ app.get('/question/simillar', function(req, res){
 })
 
 // 전체 질문보기 조회
-app.get('/question', function(req, res){
+app.get('/question', function(req, res){    
     Question.find({}).exec(function (error, data){
+        if(error){
+            console.log(error);
+        }
+        else{
+            res.status(200).send({data:data});
+        }
+    })
+})
+
+app.get('/question/:id', function(req, res){
+    Question.findOne({_id:req.params.id}).exec(function (error, data){
         if(error){
             console.log(error);
         }
@@ -329,24 +340,70 @@ app.post('/question', upload.single("image"), function (req, res){
 app.post('/answer', upload.single("file"), function (req, res){
     var file = req.file;
     var fields = req.body;
-    console.log(fields.question_id);
+    console.log(fields.questionId);
     var answer = {id: fields.id, date:new Date().getTime(), fileName: req.file.filename};
     Question.findOneAndUpdate(
-        {_id: fields.question_id}, 
+        {_id: fields.questionId}, 
         { $push: { answers : answer } },
-        function(error,success){
+        function(error, success){
+            if(error){
+                console.log(error);
+                res.status(500).send({error: error});
+            }
+            else{
+                res.status(201).send({result:'success'});
+            }
+        }    
+    );
+})
+app.post('/tutor', function(req, res){
+    var userId = req.body.userId;
+    var tutorId = req.body.tutorId;
+    console.log(userId);
+    User.findOneAndUpdate(
+        {id : userId},
+        { $push: { tutor : tutorId } },
+        function(error, success){
             if(error){
                 console.log(error);
                 res.status(500).send({error: error});
             }
             else{
                 console.log(success);
-                res.status(201).send({data: success});
+                res.status(201).send({result: 'success'});
             }
-        }    
-    );
-})
 
+        }
+    );
+        
+})
+app.get('/tutor/top/:sc', function(req, res){
+    var sc = req.params.sc;
+    var rankTop = [];
+    for(i=0;i<5;i++){
+        rankTop.push({id:'dummy'+sc+'rank'+String(i)});
+    }
+    res.send(rankTop);
+})
+app.get('/tutor/:id', function(req, res){
+    var id = req.params.id;
+    User.findOne({id:id}).exec(function(error, data){
+        if(error){
+            console.log(error);
+            res.status(500).send(error);
+        }
+        else{
+            if(data){
+                res.status(200).send({tutor:data.tutor});
+            }
+            else{
+                res.status(500).send({error:'cannot find id'});
+            }
+            console.log(data);
+            
+        }
+    })
+})
 // app.get('/qna', function(req, res){
 //     Question.find().exec(function (error, datas) {
 //         if(error) {
