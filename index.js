@@ -359,19 +359,27 @@ app.post('/answer', upload.single("file"), function (req, res){
 app.post('/tutor', function(req, res){
     var userId = req.body.userId;
     var tutorId = req.body.tutorId;
-    console.log(userId);
-    User.findOneAndUpdate(
-        {id : userId},
-        { $push: { tutor : tutorId } },
-        { upsert : true },
-        function(error, success){
+    User.findOne({id : userId}, function(error, data){
             if(error){
                 console.log(error);
                 res.status(500).send({error: error});
+                // { $push: { tutor : tutorId } },
             }
             else{
-                console.log(success);
-                res.status(201).send({result: 'success'});
+                tutorArr = data.tutor;
+                console.log(tutorArr);
+                tutorFlag = false;
+                for(i=0;i<tutorArr.length;i++){
+                    if(tutorArr[i]==tutorId){
+                        tutorFlag = true;
+                        res.status(200).send({result: 'exist tutor'});
+                    }
+                }
+                if(! tutorFlag){
+                    data.tutor.push(tutorId);
+                    data.save();
+                    res.status(201).send({result: 'success'});
+                }
             }
 
         }
