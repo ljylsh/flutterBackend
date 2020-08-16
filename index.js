@@ -45,7 +45,7 @@ var user = mongoose.Schema({
     bankName: String,
     bankNumber: String,
     tel: String,
-    tutor: [{type: String, unique: true}],
+    tutor: [{type: String}],
     favoriteCategory: [],
     point: Number,
     pointHistory: [],
@@ -363,6 +363,7 @@ app.post('/tutor', function(req, res){
     User.findOneAndUpdate(
         {id : userId},
         { $push: { tutor : tutorId } },
+        { upsert : true },
         function(error, success){
             if(error){
                 console.log(error);
