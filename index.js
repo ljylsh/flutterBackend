@@ -298,13 +298,14 @@ app.get('/question/:id', function(req, res){
 })
 
 // 관심 카테고리 내 미답변 상태의 질문 목록 조회
-app.get('/question/unanswerd', function (req, res){
+app.get('/question/unanswerd/ye', function (req, res){
     var f = req.query;
     // 관심 카테고리 array
     var yeArr = f.ye;
     console.log(yeArr);
     console.log(yeArr[0]);
-    Question.find({answer: {$size: 0}}).where('ye').in(yeArr).exec(function(error, data){
+    console.log("???");
+    Question.find({answer : { $exists: false }}).where('ye').in(yeArr).exec(function(error, data){
         console.log(data);
         res.send({data:data});
     })
