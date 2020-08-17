@@ -58,13 +58,12 @@ var question = mongoose.Schema({
     date: Date,
     id: String,
     imageName: String,
-    answers: [
-        {
-            id: String,
-            fileName: String,
-            date: Date
-        }
-    ],
+    answer: 
+    {
+        id: String,
+        fileName: String,
+        date: Date
+    },
     answerType: String,
     contents: [
         {
@@ -305,7 +304,7 @@ app.get('/question/unanswerd', function (req, res){
     var yeArr = f.ye;
     console.log(yeArr);
     console.log(yeArr[0]);
-    Question.find({answers: {$size: 0}}).where('ye').in(yeArr).exec(function(error, data){
+    Question.find({answer: {$size: 0}}).where('ye').in(yeArr).exec(function(error, data){
         console.log(data);
         res.send({data:data});
     })
@@ -344,7 +343,7 @@ app.post('/answer', upload.single("file"), function (req, res){
     var answer = {id: fields.id, date:new Date().getTime(), fileName: req.file.filename};
     Question.findOneAndUpdate(
         {_id: fields.questionId}, 
-        { $push: { answers : answer } },
+        { answer : answer },
         function(error, success){
             if(error){
                 console.log(error);
