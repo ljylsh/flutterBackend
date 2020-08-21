@@ -21,7 +21,7 @@ var upload = multer({
 });
 var fcm = new FCM("AAAApVcTjpQ:APA91bGLfT9_YrMLnqXweHqzgs_7Qnk7npah9MVKG7mkN0BPqvnZCC_AjsRCepnF6UUiIQwJylBsxrYAklNMXmCPg3pCoxN3sYPcpsbJr1lo6o6APSBB-lp_4WRfBXTFFkopRD9Dp83J");
 
-var tokenList = [];
+var tokenList = [{}];
 // mongoose.connect('mongodb://gdrc:k3263969@localhost:27017/mathtwo');
 mongoose.connect('mongodb://gdrc:k3263969@ds221292.mlab.com:21292/heroku_h9mwh8px');
 var db = mongoose.connection;
@@ -51,6 +51,7 @@ var user = mongoose.Schema({
     pointHistory: [],
     review: [],
     channelIntroduction: String,
+    token: String,
 })
 var User = mongoose.model('user', user);
 
@@ -209,6 +210,7 @@ app.post('/user/:id', function(req, res){
     })
 })
 
+
 // 새로운 질문에 대한 알람 기능은 FCM으로 진행하는게 맞을 듯.
 // 새로운 문제가 나올 때 마다 해당하는 관심 카테고리의 튜터들에게 FCM PUSH를 보내고, 
 // 접속 시에 question별 transaction을 체크 해 관심 카테고리 영역 내에 transaction이 걸리지 않은 (즉, 답변을 누군가가 달고 있거나 이미 달리지 않은) 문제가 있을 경우 알람에 NEW를 띄워주게끔.
@@ -296,7 +298,37 @@ app.get('/question/:id', function(req, res){
         }
     })
 })
-
+app.get('/user/:id/category', function (req, res){
+    User.findOne({id:req.params.id}).exec(function(error, data){
+        if(error){
+            res.status(500).send({error:error});
+        }
+        else{
+            res.status(200).send({_id: data._id, id: data.id, favoriteCategory: data.favoriteCategory});
+        }
+    })
+})
+// 유저의 관심카테고리 목록 수정
+app.post('/user/:id/category', function (req, res){
+    var userId = req.params.id;
+    var f = req.query;
+    var yeArr = f.ye;
+    console.log(yeArr);
+    console.log(yeArr[0]);
+    User.findOneAndUpdate(
+        {id : userId}, 
+        {favoriteCategory:yeArr}, 
+        function(error, data){
+            if(error){
+                console.log(error);
+                res.status(500).send({error:error});
+            }
+            else{
+                res.status(201).send({status:'201'});
+            }
+        }
+    );
+})
 // 관심 카테고리 내 미답변 상태의 질문 목록 조회
 app.get('/question/unanswerd/ye', function (req, res){
     var f = req.query;
@@ -317,7 +349,7 @@ app.post('/question', upload.single("image"), function (req, res){
     var fields = req.body;
     console.log(fields);
     console.log("FILENAME::"+req.file.filename);
-
+    
     var formData = {
         file: fs.createReadStream("uploads/"+req.file.filename),
     };
@@ -334,6 +366,131 @@ app.post('/question', upload.single("image"), function (req, res){
             res.status(201).send({data: data});
         }
     });
+
+    var answerType = fields.answerType;
+    if(answerType == 0){
+        // 누구나
+        // 관심카테고리를 설정한 유저 전체에게 보내야함
+        User.find({favoriteCategory : {$in : fields.ye}}).exec(function(err, data){
+            console.log(data);
+            for(i=0;i<data.length;i++){
+                fcm.send({
+                    to: tokenList[i].token,
+                    notification: {
+                        title: '선생님께 새 질문이 도착하였어요!',
+                        body: '지금 매튜에 접속하여 답변해보세요!',
+                        sound: "default",
+                        click_action: "FCM_PLUGIN_ACTIVITY",
+                        icon: "fcm_push_icon"
+                    }
+                }, function(err, response){
+                    if(err){
+                        console.log("PUSH MSG FAILED");
+                        console.log(err);
+                    }
+                    else {
+                        console.log("PUSH MSG SUCCESS");
+                    }
+                })
+            }
+        })
+    }
+    else if(answerType == 1){
+        // my튜터 전체
+        // my튜터 목록을 불러와 튜터 아이디 조회 해봐야함
+        User.findOne({id: fields.id}).exec(function(err, data){
+            if(err){
+                console.log(err);
+            }
+            else{
+                var tutorArr = data.tutor;
+                User.find({id : {$in : data.tutor}}).exec(function(err, data){
+                    if(err){
+                        console.log(err);
+                    }
+                    else{
+                        for(i=0;i<data.length;i++){
+                            fcm.send({
+                                to: data[i].token,
+                                notification: {
+                                    title: '선생님께 새 질문이 도착하였어요!',
+                                    body: '지금 매튜에 접속하여 답변해보세요!',
+                                    sound: "default",
+                                    click_action: "FCM_PLUGIN_ACTIVITY",
+                                    icon: "fcm_push_icon"
+                                }
+                            }, function(err, response){
+                                if(err){
+                                    console.log("PUSH MSG FAILED");
+                                    console.log(err);
+                                }
+                                else {
+                                    console.log("PUSH MSG SUCCESS");
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+        });
+    }
+    else if(answerType == 2){
+        // my튜터 중 튜터 선택
+        // my튜터 목록과 비교하여 튜터 아이디가 있는 지 조회해봐야함
+        User.findOne({id: fields.tutor}).exec(function(err, data){
+            if(err){
+                console.log(err);
+            }
+            else{
+                fcm.send({
+                    to: data.token,
+                    notification: {
+                        title: '선생님께 새 질문이 도착하였어요!',
+                        body: '지금 매튜에 접속하여 답변해보세요!',
+                        sound: "default",
+                        click_action: "FCM_PLUGIN_ACTIVITY",
+                        icon: "fcm_push_icon"
+                    }
+                }, function(err, response){
+                    if(err){
+                        console.log("PUSH MSG FAILED");
+                        console.log(err);
+                    }
+                    else {
+                        console.log("PUSH MSG SUCCESS");
+                    }
+                })
+            }
+        })
+    }
+    else if(answerType == 3){
+        // top 튜터 상위 30%에게 요청
+        // 30%의 기준 DB에서 id 조회해와서 보내야함
+        User.find({favoriteCategory : {$in : fields.ye}}).exec(function(err, data){
+            console.log(data);
+            for(i=0;i<data.length;i++){
+                // 30%만 정렬하는 알고리즘 개발 해야함. 현재는 누구나와 동일
+                fcm.send({
+                    to: data[i].token,
+                    notification: {
+                        title: '선생님께 새 질문이 도착하였어요!',
+                        body: '지금 매튜에 접속하여 답변해보세요!',
+                        sound: "default",
+                        click_action: "FCM_PLUGIN_ACTIVITY",
+                        icon: "fcm_push_icon"
+                    }
+                }, function(err, response){
+                    if(err){
+                        console.log("PUSH MSG FAILED");
+                        console.log(err);
+                    }
+                    else {
+                        console.log("PUSH MSG SUCCESS");
+                    }
+                })
+            }
+        })
+    }
 })
 
 // 질문에 새로운 답변 등록
@@ -413,6 +570,8 @@ app.get('/tutor/:id', function(req, res){
         }
     })
 })
+
+
 // app.get('/qna', function(req, res){
 //     Question.find().exec(function (error, datas) {
 //         if(error) {
@@ -445,14 +604,31 @@ app.get('/tutor/:id', function(req, res){
 // FCM PUSH를 위한 token 수집
 app.post('/token', function(req, res){
     console.log(req.body.token);
-    hasToken = false;
-    for(i=0;i<tokenList.length;i++){
-        if(tokenList[i]==req.body.token){
-            hasToken = true;
+    console.log(req.body._id);
+    console.log(req.body.id);
+    
+    User.findOneAndUpdate(
+        { _id:req.body._id },
+        { token : req.body.token },
+        function(error, success){
+            if(error){
+                console.log(error);
+                res.status(500).send({error: error});
+            }
+            else{
+                res.status(201).send({result:'token update success'});
+            }
         }
-    }
-    if(! hasToken)
-        tokenList.push(req.body.token);
+    );
+
+    // hasToken = false;
+    // for(i=0;i<tokenList.length;i++){
+    //     if(tokenList[i].token==req.body.token){
+    //         hasToken = true;
+    //     }
+    // }
+    // if(! hasToken)
+    //     tokenList.push({token:req.body.token, _id:req.body._id, id:req.body.id});
 })
 // FCM PUSH 메세지 보내기
 app.post('/fcm', function(req, res){
@@ -460,7 +636,7 @@ app.post('/fcm', function(req, res){
     // console.log(req.body);
     for(i=0;i<tokenList.length;i++){
         fcm.send({
-            to: tokenList[i],
+            to: tokenList[i].token,
             notification: {
                 title: '서버에서 전송한 PUSH 메세지입니다',
                 body: '보낸파일명:'+req.body.name,
