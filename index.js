@@ -397,7 +397,7 @@ app.post('/question', upload.single("image"), function (req, res){
                         title: '선생님께 새 질문이 도착하였어요!',
                         body: '지금 매튜에 접속하여 답변해보세요!',
                         sound: "default",
-                        click_action: "FCM_PLUGIN_ACTIVITY",
+                        click_action: "OPEN_ACTIVITY_QUESTION",
                         icon: "fcm_push_icon"
                     }
                 }, function(err, response){
@@ -433,7 +433,7 @@ app.post('/question', upload.single("image"), function (req, res){
                                     title: '선생님께 새 질문이 도착하였어요!',
                                     body: '지금 매튜에 접속하여 답변해보세요!',
                                     sound: "default",
-                                    click_action: "FCM_PLUGIN_ACTIVITY",
+                                    click_action: "OPEN_ACTIVITY_QUESTION",
                                     icon: "fcm_push_icon"
                                 }
                             }, function(err, response){
@@ -465,7 +465,7 @@ app.post('/question', upload.single("image"), function (req, res){
                         title: '선생님께 새 질문이 도착하였어요!',
                         body: '지금 매튜에 접속하여 답변해보세요!',
                         sound: "default",
-                        click_action: "FCM_PLUGIN_ACTIVITY",
+                        click_action: "OPEN_ACTIVITY_QUESTION",
                         icon: "fcm_push_icon"
                     }
                 }, function(err, response){
@@ -493,7 +493,7 @@ app.post('/question', upload.single("image"), function (req, res){
                         title: '선생님께 새 질문이 도착하였어요!',
                         body: '지금 매튜에 접속하여 답변해보세요!',
                         sound: "default",
-                        click_action: "FCM_PLUGIN_ACTIVITY",
+                        click_action: "OPEN_ACTIVITY_QUESTION",
                         icon: "fcm_push_icon"
                     }
                 }, function(err, response){
@@ -536,7 +536,7 @@ app.post('/answer', upload.single("file"), function (req, res){
                                 title: '질문에 대한 답변이 도착하였어요!',
                                 body: '지금 매튜에 접속하여 확인해보세요!',
                                 sound: "default",
-                                click_action: "FCM_PLUGIN_ACTIVITY",
+                                click_action: "OPEN_ACTIVITY_ANSWER",
                                 icon: "fcm_push_icon"
                             }
                         }, function(err, response){
@@ -726,7 +726,7 @@ app.post('/fcm', function(req, res){
                 title: '서버에서 전송한 PUSH 메세지입니다',
                 body: '보낸파일명:'+req.body.name,
                 sound: "default",
-                click_action: "FCM_PLUGIN_ACTIVITY",
+                click_action: "OPEN_ACTIVITY_QUESTION",
                 icon: "fcm_push_icon"
             }
         }, function(err, response){
