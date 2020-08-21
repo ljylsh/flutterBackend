@@ -375,7 +375,7 @@ app.post('/question', upload.single("image"), function (req, res){
             console.log(data);
             for(i=0;i<data.length;i++){
                 fcm.send({
-                    to: tokenList[i].token,
+                    to: data[i].token,
                     notification: {
                         title: '선생님께 새 질문이 도착하였어요!',
                         body: '지금 매튜에 접속하여 답변해보세요!',
