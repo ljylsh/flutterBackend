@@ -52,6 +52,20 @@ var user = mongoose.Schema({
     review: [],
     channelIntroduction: String,
     token: String,
+    contents: [
+        {
+            id: String,
+            fileName: String,
+            text: String,
+            likes: [{id:String}],
+            comments: [{
+                id:String,
+                text: String,
+                date: Date
+            }],
+            date: Date,
+        }
+    ],
 })
 var User = mongoose.model('user', user);
 
@@ -66,19 +80,6 @@ var question = mongoose.Schema({
         date: Date
     },
     answerType: String,
-    contents: [
-        {
-            fileName: String,
-            text: String,
-            likes: [{id:String}],
-            comments: [{
-                id:String,
-                text: String,
-                date: Date
-            }],
-            date: Date,
-        }
-    ],
     tutor: String,
     price: Number,
     sc: String,
@@ -135,6 +136,11 @@ app.get('/terms', function(req, res){
     })
 })
 
+var sc = [];
+var ye = [];
+var bi = [];
+var mi = [];
+var sm = [];
 app.get('/content/tutor/:id', function(req, res){
     var id = req.params.id;
 // 최신 컨텐츠 부분 상단 DB Schema 참조하여 코딩할것.
@@ -279,6 +285,17 @@ app.get('/question/simillar', function(req, res){
 // 전체 질문보기 조회
 app.get('/question', function(req, res){    
     Question.find({}).exec(function (error, data){
+        if(error){
+            console.log(error);
+        }
+        else{
+            res.status(200).send({data:data});
+        }
+    })
+})
+app.get('/user/:id/question', function(req, res){
+    console.log(req.params.id);
+    Question.find({id:req.params.id}).sort({date:-1}).exec(function (error, data){
         if(error){
             console.log(error);
         }
@@ -508,11 +525,79 @@ app.post('/answer', upload.single("file"), function (req, res){
                 res.status(500).send({error: error});
             }
             else{
+                User.findOne({id: success.id}).exec(function(err, data){
+                    if(err){
+                        console.log(err);
+                    }
+                    else{
+                        fcm.send({
+                            to: data.token,
+                            notification: {
+                                title: '질문에 대한 답변이 도착하였어요!',
+                                body: '지금 매튜에 접속하여 확인해보세요!',
+                                sound: "default",
+                                click_action: "FCM_PLUGIN_ACTIVITY",
+                                icon: "fcm_push_icon"
+                            }
+                        }, function(err, response){
+                            if(err){
+                                console.log("PUSH MSG FAILED");
+                                console.log(err);
+                            }
+                            else {
+                                console.log("PUSH MSG SUCCESS");
+                            }
+                        })
+                    }
+                })
                 res.status(201).send({result:'success'});
             }
         }    
     );
 })
+
+app.get('/user/:id/content', function(req, res){
+    User.findOne({id: req.params.id}).exec(function (error, data){
+        if(error){
+            console.log(error);
+        }
+        else{
+            console.log("IN HERE");
+            tutorArr = data.tutor;
+            console.log(tutorArr);
+            User.find({id : {$in: tutorArr}}).exec(function(error, data){
+                if(error){
+                    console.log(error);
+                }
+                else{
+                    console.log(data);
+                    contentsArr = [{}];
+                    for(i=0;i<data.length;i++){
+                        contentsArr.push(data[i].contents)
+                    }
+                    res.send({data:contentsArr});
+                }
+            });
+        }
+    })
+})
+// 메인화면 컨텐츠 좋아요 / 댓글 기능 구현 필요함. 시연 이후!
+
+app.post('/user/:id/content', upload.single("file"), function(req, res){
+    var id = req.params.id;
+    var content = {id: req.params.id, date:new Date().getTime(), fileName: req.file.filename, text: req.body.text};
+    User.findOne({id: id}, function(error, data){
+        if(error){
+            console.log(error);
+        }
+        else{
+            data.contents.push(content);
+            data.save();
+            res.status(201).send({result: 'success'});
+        }
+    });
+})
+
 app.post('/tutor', function(req, res){
     var userId = req.body.userId;
     var tutorId = req.body.tutorId;
