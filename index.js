@@ -64,6 +64,7 @@ var user = mongoose.Schema({
                 date: Date
             }],
             date: Date,
+            fileType: Number,
         }
     ],
 })
@@ -604,7 +605,12 @@ app.get('/user/:id/content', function(req, res){
 
 app.post('/user/:id/content', upload.single("file"), function(req, res){
     var id = req.params.id;
-    var content = {id: req.params.id, date:new Date().getTime(), fileName: req.file.filename, text: req.body.text};
+    var fileType=0;
+    if(req.file.mimetype.includes('video')){
+        fileType = 1;
+    }
+    var content = {id: req.params.id, date:new Date().getTime(), fileName: req.file.filename, text: req.body.text, fileType: fileType};
+    
     User.findOne({id: id}, function(error, data){
         if(error){
             console.log(error);
