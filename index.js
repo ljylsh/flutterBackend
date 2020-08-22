@@ -311,7 +311,12 @@ app.get('/question/:id', function(req, res){
             console.log(error);
         }
         else{
-            res.status(200).send({data:data});
+            if(data){
+                res.status(200).send({data:data});
+            }
+            else{
+                res.status(404).send({error:'question cannot find'});
+            }
         }
     })
 })
@@ -321,7 +326,12 @@ app.get('/user/:id/category', function (req, res){
             res.status(500).send({error:error});
         }
         else{
-            res.status(200).send({_id: data._id, id: data.id, favoriteCategory: data.favoriteCategory});
+            if(data){
+                res.status(200).send({_id: data._id, id: data.id, favoriteCategory: data.favoriteCategory});
+            }
+            else{
+                res.status(404).send({error:'user cannot find'})
+            }
         }
     })
 })
@@ -563,21 +573,30 @@ app.get('/user/:id/content', function(req, res){
         }
         else{
             console.log("IN HERE");
-            tutorArr = data.tutor;
-            console.log(tutorArr);
-            User.find({id : {$in: tutorArr}}).exec(function(error, data){
-                if(error){
-                    console.log(error);
-                }
-                else{
-                    console.log(data);
-                    contentsArr = [{}];
-                    for(i=0;i<data.length;i++){
-                        contentsArr.push(data[i].contents)
+            if(data){
+                tutorArr = data.tutor;
+        
+                console.log(tutorArr);
+                User.find({id : {$in: tutorArr}}).exec(function(error, data){
+                    if(error){
+                        console.log(error);
                     }
-                    res.send({data:contentsArr});
-                }
-            });
+                    else{
+                        console.log(data);
+                        contentsArr = [{}];
+                        for(i=0;i<data.length;i++){
+                            contentsArr.push(data[i].contents)
+                        }
+                        res.send({data:contentsArr});
+                    }
+                });
+
+            }
+            else{
+                res.send({error:'user cannot find'})
+            }
+            
+            
         }
     })
 })
