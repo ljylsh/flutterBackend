@@ -395,8 +395,8 @@ app.post('/question', upload.single("image"), function (req, res){
         }
     });
 
-    var answerType = fields.answerType;
-    if(answerType == 0){
+    var answerTargetType = fields.answerTargetType;
+    if(answerTargetType == 0){
         // 누구나
         // 관심카테고리를 설정한 유저 전체에게 보내야함
         User.find({favoriteCategory : {$in : fields.ye}}).exec(function(err, data){
@@ -423,7 +423,7 @@ app.post('/question', upload.single("image"), function (req, res){
             }
         })
     }
-    else if(answerType == 1){
+    else if(answerTargetType == 1){
         // my튜터 전체
         // my튜터 목록을 불러와 튜터 아이디 조회 해봐야함
         User.findOne({id: fields.id}).exec(function(err, data){
@@ -462,7 +462,7 @@ app.post('/question', upload.single("image"), function (req, res){
             }
         });
     }
-    else if(answerType == 2){
+    else if(answerTargetType == 2){
         // my튜터 중 튜터 선택
         // my튜터 목록과 비교하여 튜터 아이디가 있는 지 조회해봐야함
         User.findOne({id: fields.tutor}).exec(function(err, data){
@@ -470,28 +470,33 @@ app.post('/question', upload.single("image"), function (req, res){
                 console.log(err);
             }
             else{
-                fcm.send({
-                    to: data.token,
-                    notification: {
-                        title: '선생님께 새 질문이 도착하였어요!',
-                        body: '지금 매튜에 접속하여 답변해보세요!',
-                        sound: "default",
-                        click_action: "OPEN_ACTIVITY_QUESTION",
-                        icon: "fcm_push_icon"
-                    }
-                }, function(err, response){
-                    if(err){
-                        console.log("PUSH MSG FAILED");
-                        console.log(err);
-                    }
-                    else {
-                        console.log("PUSH MSG SUCCESS");
-                    }
-                })
+                if(data){
+                    fcm.send({
+                        to: data.token,
+                        notification: {
+                            title: '선생님께 새 질문이 도착하였어요!',
+                            body: '지금 매튜에 접속하여 답변해보세요!',
+                            sound: "default",
+                            click_action: "OPEN_ACTIVITY_QUESTION",
+                            icon: "fcm_push_icon"
+                        }
+                    }, function(err, response){
+                        if(err){
+                            console.log("PUSH MSG FAILED");
+                            console.log(err);
+                        }
+                        else {
+                            console.log("PUSH MSG SUCCESS");
+                        }
+                    })
+                }
+                else{
+                    console.log("USER CANNOT FIND")
+                }
             }
         })
     }
-    else if(answerType == 3){
+    else if(answerTargetType == 3){
         // top 튜터 상위 30%에게 요청
         // 30%의 기준 DB에서 id 조회해와서 보내야함
         User.find({favoriteCategory : {$in : fields.ye}}).exec(function(err, data){
