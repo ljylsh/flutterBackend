@@ -584,9 +584,12 @@ app.get('/user/:id/content', function(req, res){
                     }
                     else{
                         console.log(data);
-                        contentsArr = [{}];
+                        contentsArr = [];
                         for(i=0;i<data.length;i++){
-                            contentsArr.push(data[i].contents)
+                            for(j=0;j<data[i].contents.length;j++){
+                                contentsArr.push(data[i].contents[j]);
+                            }
+                            // contentsArr.push(data[i].contents)
                         }
                         res.send({data:contentsArr});
                     }
