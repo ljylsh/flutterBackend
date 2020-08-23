@@ -552,6 +552,16 @@ app.get('/category', function(req, res){
             res.send(scArr);
         }
         else if(groupCode == "학년"){
+            yeArr = [];
+            if(groupName){
+                if(groupName == "고등학교"){
+                    yeArr.push({code:"0", name:"고1(상)"});
+                    yeArr.push({code:"1", name:"고1(하)"});
+                }
+            }
+            res.send(yeArr);
+        }
+        else if(groupCode == "대단원"){
             biArr = [];
             if(groupName){
                 if(groupName == "고1(상)"){
@@ -562,7 +572,7 @@ app.get('/category', function(req, res){
             }
             res.send(biArr);
         }
-        else if(groupCode == "대단원"){
+        else if(groupCode == "중단원"){
             miArr = [];
             if(groupName){
                 if(groupName == "다항식의 연산"){
