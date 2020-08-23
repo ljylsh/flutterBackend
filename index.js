@@ -19,7 +19,7 @@ var upload = multer({
         }
     }),
 });
-var fcm = new FCM("AAAApVcTjpQ:APA91bGLfT9_YrMLnqXweHqzgs_7Qnk7npah9MVKG7mkN0BPqvnZCC_AjsRCepnF6UUiIQwJylBsxrYAklNMXmCPg3pCoxN3sYPcpsbJr1lo6o6APSBB-lp_4WRfBXTFFkopRD9Dp83J");
+var fcm = new FCM("AAAAAoow1E0:APA91bHBVS6Ap3mw-22Pht_MF7gOCTncmdUd9N7JRKJUnLj_8rkssZUqhvGZvHF-MORZReFLG8lfrG5l5PhkrjoKdIQAr6Zcrrl1BWINpeFIqntcHdeJX4ojTphHlhNddNuv1xmewQpV");
 
 var tokenList = [{}];
 // mongoose.connect('mongodb://gdrc:k3263969@localhost:27017/mathtwo');
@@ -78,7 +78,8 @@ var question = mongoose.Schema({
     {
         id: String,
         fileName: String,
-        date: Date
+        date: Date,
+        fileType: Number,
     },
     answerType: String,
     tutor: String,
@@ -129,6 +130,418 @@ answer.push({code:'002', name:'문제풀이동영상', price:1000});
 answer.push({code:'003', name:'화상과외', price:2000});
 app.get('/answer-type', function(req, res){
     res.send(answer);
+})
+
+var categoryArr = {
+    sc:[
+        {
+            code:'17', 
+            name:'고등',
+            ye:[
+                {
+                    code:'0',
+                    name:'고1(상)',
+                    bi:[
+                        {
+                            code:'0',
+                            name:'다항식의 연산',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'다항식의 덧셈과 뺄셈',
+                                },
+                                {
+                                    code:'1',
+                                    name:'다항식의 곱셈과 나눗셈',
+                                },
+                            ]
+                        },
+                        {
+                            code:'1',
+                            name:'나머지정리와 인수분해',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'항등식',
+                                },
+                                {
+                                    code:'1',
+                                    name:'나머지정리',
+                                },
+                                {
+                                    code:'2',
+                                    name:'인수분해',
+                                },
+                            ]
+                        },
+                        {
+                            code:'2',
+                            name:'복소수와 이차방정식',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'복소수와 그 연산'
+                                },
+                                {
+                                    code:'1',
+                                    name:'이차방정식',
+                                },
+                            ]
+                        },
+                        {
+                            code:'3',
+                            name:'이차방정식과 이차함수',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'이차방정식과 이차함수의 관계',
+                                },
+                                {
+                                    code:'1',
+                                    name:'이차함수의 최대, 최소',
+                                },
+                            ]
+                        },
+                        {
+                            code:'4',
+                            name:'여러 가지 방정식과 부등식',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'삼차방정식과 사차방정식',
+                                },
+                                {
+                                    code:'1',
+                                    name:'연립방정식',
+                                },
+                                {
+                                    code:'2',
+                                    name:'일차부등식',
+                                },
+                                {
+                                    code:'3',
+                                    name:'이차부등식',
+                                },
+                            ]
+                        },
+                        {
+                            code:'5',
+                            name:'평면좌표',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'두 점 사이의 거리',
+                                },
+                                {
+                                    code:'1',
+                                    name:'선분의 내분과 외분',
+                                },
+                            ]
+                        },
+                        {
+                            code:'6',
+                            name:'직선의 방정식',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'직선의 방정식',
+                                },
+                            ]
+                        },
+                        {
+                            code:'7',
+                            name:'원의 방정식',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'원의 방정식',
+                                },
+                                {
+                                    code:'1',
+                                    name:'원과 직선의 위치 관계',
+                                },
+                            ]
+                        },
+                        {
+                            code:'8',
+                            name:'도형의 이동',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'평행이동',
+                                },
+                                {
+                                    code:'1',
+                                    name:'대칭이동',
+                                },
+                            ]
+                        },
+                    ]
+                },
+                {
+                    code:'1',
+                    name:'고1(하)',
+                    bi:[
+                        {
+                            code:'0',
+                            name:'집합',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'1',
+                            name:'명제',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'2',
+                            name:'함수',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'3',
+                            name:'유리함수와 무리함수',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'4',
+                            name:'순열',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'5',
+                            name:'조합',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                    ]
+                },
+                {
+                    code:'2',
+                    name:'기하',
+                    bi:[
+                        {
+                            code:'0',
+                            name:'이차곡선',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'1',
+                            name:'벡터',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'2',
+                            name:'공간도형',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                    ]
+                },
+                {
+                    code:'3',
+                    name:'미적분',
+                    bi:[
+                        {
+                            code:'0',
+                            name:'수열의 극한',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'1',
+                            name:'여러 가지 함수의 미분',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'2',
+                            name:'미분법',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'3',
+                            name:'적분법',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                    ]
+                },
+                {
+                    code:'4',
+                    name:'수학Ⅰ',
+                    bi:[
+                        {
+                            code:'1',
+                            name:'지수함수와 로그함수',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'2',
+                            name:'삼각함수',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'3',
+                            name:'수열',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                    ]
+                },
+                {
+                    code:'5',
+                    name:'수학Ⅱ',
+                    bi:[
+                        {
+                            code:'1',
+                            name:'함수의 극한과 연속',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'2',
+                            name:'다항함수의 미분법',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'3',
+                            name:'다항함수의 적분법',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                    ]
+                },
+                {
+                    code:'6',
+                    name:'확률과통계',
+                    bi:[
+                        {
+                            code:'1',
+                            name:'경우의 수',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'2',
+                            name:'확률',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                        {
+                            code:'3',
+                            name:'통계',
+                            mi:[
+                                {
+                                    code:'0',
+                                    name:'',
+                                }
+                            ]
+                        },
+                    ]
+                },
+            ]
+        },
+
+    ]
+}
+
+app.get('/category', function(req, res){
+    res.send(categoryArr);
 })
 
 app.get('/terms', function(req, res){
@@ -294,18 +707,48 @@ app.get('/question', function(req, res){
         }
     })
 })
+// 본인 질문 최신순 보기
 app.get('/user/:id/question', function(req, res){
-    console.log(req.params.id);
-    Question.find({id:req.params.id}).sort({date:-1}).exec(function (error, data){
-        if(error){
-            console.log(error);
-        }
-        else{
-            res.status(200).send({data:data});
-        }
-    })
+    var bi = req.query.bi;
+    var mi = req.query.mi;
+    console.log(bi+"&&&"+mi);
+    console.log(req.query);
+    if(mi && bi){
+        console.log("중단원 검색");
+        Question.find({id:req.params.id, bi:req.params.bi, mi:req.params.mi}).sort({date:-1}).exec(function (error, data){
+            if(error){
+                console.log(error);
+            }
+            else{
+                res.status(200).send({data:data});
+            }
+        })
+    }
+    else if(bi){
+        console.log("대단원 검색");
+        Question.find({id:req.params.id, bi:req.params.bi}).sort({date:-1}).exec(function (error, data){
+            if(error){
+                console.log(error);
+            }
+            else{
+                res.status(200).send({data:data});
+            }
+        })
+    }
+    else{
+        console.log("본인 문제 전체 검색");
+        Question.find({id:req.params.id}).sort({date:-1}).exec(function (error, data){
+            if(error){
+                console.log(error);
+            }
+            else{
+                res.status(200).send({data:data});
+            }
+        })
+    }
 })
 
+// 질문 _id 검색 (show detail)
 app.get('/question/:id', function(req, res){
     Question.findOne({_id:req.params.id}).exec(function (error, data){
         if(error){
@@ -531,7 +974,11 @@ app.post('/answer', upload.single("file"), function (req, res){
     var file = req.file;
     var fields = req.body;
     console.log(fields.questionId);
-    var answer = {id: fields.id, date:new Date().getTime(), fileName: req.file.filename};
+    var fileType=0;
+    if(req.file.mimetype.includes('video')){
+        fileType = 1;
+    }
+    var answer = {id: fields.id, date:new Date().getTime(), fileName: req.file.filename, fileType: fileType};
     Question.findOneAndUpdate(
         {_id: fields.questionId}, 
         { answer : answer },
