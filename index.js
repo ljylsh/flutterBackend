@@ -117,9 +117,74 @@ app.use(bodyParser.json());
 app.use('/uploads', express.static('uploads'));
 
 var bank=[];
-bank.push({code:'001', name:'은행테스트1'});
-bank.push({code:'002', name:'은행테스트2'});
-bank.push({code:'003', name:'은행테스트3'});
+bank.push({code:'003', name:'기업은행'});
+bank.push({code:'004', name:'KB국민은행'});
+bank.push({code:'005', name:'외환은행'});
+bank.push({code:'007', name:'수협중앙회'});
+bank.push({code:'008', name:'수출입은행'});
+bank.push({code:'011', name:'농협중앙회'});
+bank.push({code:'012', name:'단위 농협'});
+bank.push({code:'020', name:'우리은행'});
+bank.push({code:'023', name:'SC은행'});
+bank.push({code:'027', name:'한국씨티은행'});
+bank.push({code:'045', name:'새마을금고중앙회'});
+bank.push({code:'048', name:'신협중앙회'});
+bank.push({code:'071', name:'우체국'});
+bank.push({code:'081', name:'하나은행'});
+bank.push({code:'088', name:'신한은행'});
+bank.push({code:'031', name:'대구은행'});
+bank.push({code:'032', name:'부산은행'});
+bank.push({code:'034', name:'광주은행'});
+bank.push({code:'035', name:'제주은행'});
+bank.push({code:'037', name:'전북은행'});
+bank.push({code:'039', name:'경남은행'});
+bank.push({code:'050', name:'상호저축은행'});
+bank.push({code:'064', name:'산림조합중앙회'});
+bank.push({code:'052', name:'모건스탠리은행'});
+bank.push({code:'054', name:'HSBC은행'});
+bank.push({code:'055', name:'도이치은행'});
+bank.push({code:'056', name:'알비에스피엘씨은행'});
+bank.push({code:'057', name:'제이피모간체이스은행'});
+bank.push({code:'058', name:'미즈호은행'});
+bank.push({code:'059', name:'미쓰비시도쿄UFJ은행'});
+bank.push({code:'060', name:'BOA은행'});
+bank.push({code:'061', name:'비엔피파리바은행'});
+bank.push({code:'062', name:'중국공상은행'});
+bank.push({code:'063', name:'중국은행'});
+bank.push({code:'065', name:'대화은행'});
+bank.push({code:'076', name:'신용보증기금'});
+bank.push({code:'077', name:'기술보증기금'});
+bank.push({code:'092', name:'한국정책금융공사'});
+bank.push({code:'093', name:'한국주택금융공사'});
+bank.push({code:'094', name:'서울보증보험'});
+bank.push({code:'095', name:'경찰청'});
+bank.push({code:'096', name:'한국전자금융(주)'});
+bank.push({code:'099', name:'금융결제원'});
+bank.push({code:'209', name:'유안타증권'});
+bank.push({code:'218', name:'현대증권'});
+bank.push({code:'230', name:'미래에셋증권'});
+bank.push({code:'238', name:'대우증권'});
+bank.push({code:'240', name:'삼성증권'});
+bank.push({code:'243', name:'한국투자증권'});
+bank.push({code:'247', name:'우리투자증권'});
+bank.push({code:'261', name:'교보증권'});
+bank.push({code:'262', name:'하이투자증권'});
+bank.push({code:'263', name:'HMC투자증권'});
+bank.push({code:'264', name:'키움증권'});
+bank.push({code:'265', name:'이트레이드증권'});
+bank.push({code:'266', name:'SK증권'});
+bank.push({code:'267', name:'대신증권'});
+bank.push({code:'268', name:'아이엠투자증권'});
+bank.push({code:'269', name:'한화투자증권'});
+bank.push({code:'270', name:'하나대투증권'});
+bank.push({code:'278', name:'신한금융투자'});
+bank.push({code:'279', name:'동부증권'});
+bank.push({code:'280', name:'유진투자증권'});
+bank.push({code:'287', name:'메리츠종합금융증권'});
+bank.push({code:'289', name:'NH농협증권'});
+bank.push({code:'290', name:'부국증권'});
+bank.push({code:'291', name:'신영증권'});
+bank.push({code:'292', name:'LIG투자증권'});
 app.get('/bank', function(req, res){
     res.send(bank);
 })
@@ -288,7 +353,11 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
+                                    name:'집합의 뜻과 표현',
+                                },
+                                {
+                                    code:'1',
+                                    name:'집합의 연산'
                                 }
                             ]
                         },
@@ -298,8 +367,12 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'명제',
+                                },
+                                {
+                                    code:'1',
+                                    name:'절대부등식',
+                                },
                             ]
                         },
                         {
@@ -308,8 +381,20 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'함수의 뜻과 그래프',
+                                },
+                                {
+                                    code:'1',
+                                    name:'여러 가지 함수',
+                                },
+                                {
+                                    code:'2',
+                                    name:'합성함수',
+                                },
+                                {
+                                    code:'3',
+                                    name:'역함수',
+                                },
                             ]
                         },
                         {
@@ -318,8 +403,20 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'유리식',
+                                },
+                                {
+                                    code:'1',
+                                    name:'유리함수',
+                                },
+                                {
+                                    code:'2',
+                                    name:'무리식',
+                                },
+                                {
+                                    code:'3',
+                                    name:'무리함수',
+                                },
                             ]
                         },
                         {
@@ -328,8 +425,12 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'경우의 수',
+                                },
+                                {
+                                    code:'1',
+                                    name:'순열',
+                                },
                             ]
                         },
                         {
@@ -338,7 +439,7 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
+                                    name:'조합',
                                 }
                             ]
                         },
@@ -354,8 +455,12 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'이차곡선',
+                                },
+                                {
+                                    code:'1',
+                                    name:'이차곡선과 직선',
+                                },
                             ]
                         },
                         {
@@ -364,8 +469,12 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'벡터의 연산',
+                                },
+                                {
+                                    code:'1',
+                                    name:'벡터의 성분과 내적',
+                                },
                             ]
                         },
                         {
@@ -374,8 +483,12 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'공간도형',
+                                },
+                                {
+                                    code:'1',
+                                    name:'공간좌표',
+                                },
                             ]
                         },
                     ]
@@ -390,8 +503,12 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'수열의 극한',
+                                },
+                                {
+                                    code:'1',
+                                    name:'급수',
+                                },
                             ]
                         },
                         {
@@ -400,8 +517,12 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'지수함수와 로그함수의 미분',
+                                },
+                                {
+                                    code:'1',
+                                    name:'삼각함수의 미분',
+                                },
                             ]
                         },
                         {
@@ -410,8 +531,16 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'여러 가지 미분법',
+                                },
+                                {
+                                    code:'1',
+                                    name:'도함수의 활용(1)',
+                                },
+                                {
+                                    code:'2',
+                                    name:'도함수의 활용(2)',
+                                },
                             ]
                         },
                         {
@@ -420,8 +549,16 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'여러 가지 적분법',
+                                },
+                                {
+                                    code:'1',
+                                    name:'정적분',
+                                },
+                                {
+                                    code:'2',
+                                    name:'정적분의 활용',
+                                },
                             ]
                         },
                     ]
@@ -436,8 +573,20 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'지수',
+                                },
+                                {
+                                    code:'1',
+                                    name:'로그',
+                                },
+                                {
+                                    code:'2',
+                                    name:'지수함수',
+                                },
+                                {
+                                    code:'3',
+                                    name:'로그함수',
+                                },
                             ]
                         },
                         {
@@ -446,8 +595,16 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'삼각함수',
+                                },
+                                {
+                                    code:'1',
+                                    name:'삼각함수의 그래프',
+                                },
+                                {
+                                    code:'2',
+                                    name:'삼각함수의 활용',
+                                },
                             ]
                         },
                         {
@@ -456,8 +613,16 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'등차수열과 등비수열',
+                                },
+                                {
+                                    code:'1',
+                                    name:'수열의 합',
+                                },
+                                {
+                                    code:'2',
+                                    name:'수학적 귀납법',
+                                },
                             ]
                         },
                     ]
@@ -472,8 +637,12 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'함수의 극한',
+                                },
+                                {
+                                    code:'1',
+                                    name:'함수의 연속',
+                                },
                             ]
                         },
                         {
@@ -482,8 +651,12 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'미분계수와 도함수',
+                                },
+                                {
+                                    code:'1',
+                                    name:'도함수의 활용',
+                                },
                             ]
                         },
                         {
@@ -492,8 +665,16 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'부정적분',
+                                },
+                                {
+                                    code:'1',
+                                    name:'정적분',
+                                },
+                                {
+                                    code:'2',
+                                    name:'정적분의 활용',
+                                },
                             ]
                         },
                     ]
@@ -508,8 +689,12 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'여러가지 순열',
+                                },
+                                {
+                                    code:'1',
+                                    name:'중복조합과 이항정리',
+                                },
                             ]
                         },
                         {
@@ -518,8 +703,12 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'확률의 뜻과 활용',
+                                },
+                                {
+                                    code:'1',
+                                    name:'조건부확률',
+                                },
                             ]
                         },
                         {
@@ -528,8 +717,12 @@ var categoryArr = {
                             mi:[
                                 {
                                     code:'0',
-                                    name:'',
-                                }
+                                    name:'확률분포',
+                                },
+                                {
+                                    code:'1',
+                                    name:'통계적 추정',
+                                },
                             ]
                         },
                     ]
@@ -740,6 +933,8 @@ app.get('/question/same', function(req, res){
 })
 
 // 유사 문항 찾기
+// 유사문항 sim_x와 sim_y값의 범위를 어떻게 줘야할 지 강성구 연구원에게 물어봐야함.
+// 쌍둥이 문제의 경우 sim_x와 sim_y의 값이 어느정도 편차가 있는지 확인하고 오차범위를 설정해야할듯?
 app.get('/question/simillar', function(req, res){
     var sim_x = req.query.sim_x;
     var sim_y = req.query.sim_y;
@@ -761,6 +956,40 @@ app.get('/question/simillar', function(req, res){
     })
 })
 
+// 심화 문항 찾기
+app.get('/question/deepen', function(req, res){
+    var sim_x = req.query.sim_x;
+    var sim_y = req.query.sim_y;
+    var sc = req.query.sc;
+    var ye = req.query.ye;
+    var bi = req.query.bi;
+    var mi = req.query.mi;
+    var sm = req.query.sm;
+    var diff = req.query.diff;
+    
+    var deepen = "중";
+    if(diff == "하"){
+        deepen = "중";
+    }
+    else if(diff == "중"){
+        deepen = "상";
+    }
+    else if(diff == "상"){
+        deepen = "최상";
+    }
+    else if(diff == "최상"){
+        deepen = "최상";
+    }
+    Question.find({sim_x:sim_x, sim_y:sim_y, sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:deepen}).exec(function (error, data){
+        if(error){
+            console.log(error);
+            res.status(500).send({err:error})
+        }
+        else{
+            res.status(200).send({data:data});
+        }
+    })
+})
 // 전체 질문보기 조회
 app.get('/question', function(req, res){    
     Question.find({}).exec(function (error, data){
@@ -774,13 +1003,21 @@ app.get('/question', function(req, res){
 })
 // 본인 질문 최신순 보기
 app.get('/user/:id/question', function(req, res){
+    var sc = req.query.sc;
+    var ye = req.query.ye;
     var bi = req.query.bi;
     var mi = req.query.mi;
-    console.log(bi+"&&&"+mi);
+    
     console.log(req.query);
-    if(mi && bi){
+    // 현재 대단원, 중단원이 인공지능 예측 수행 시 String값으로 돌아옴.
+    // 인공지능 예측 결과 예시 bi: 1. 다항식의 연산 mi: 1.1. 다항식의 덧셈과 뺄셈
+    // 하지만 공통코드에서 내려주는 Tag는 bi: 다항식의 연산 mi: 다항식의 덧셈과 뺄셈 이런 식으로 나옴.
+    // equals 비교를 할 시, 동일하지 않으므로 contains 비교를 통해 임시로 결과를 돌려준 후, 차후 카테고리 코드 정보를 작성 후 포스텍에 공유하여
+    // 카테고리 코드값으로 주고 받게끔 수정이 필요할듯.
+
+    if(mi && bi && ye && sc){
         console.log("중단원 검색");
-        Question.find({id:req.params.id, bi:req.params.bi, mi:req.params.mi}).sort({date:-1}).exec(function (error, data){
+        Question.find({id:req.params.id, mi:{$regex:".*"+mi+".*"}, bi:{$regex:".*"+bi+".*"}, ye:{$regex:".*"+ye+".*"}, sc:{$regex:".*"+sc+".*"},}).sort({date:-1}).exec(function (error, data){
             if(error){
                 console.log(error);
             }
@@ -789,9 +1026,31 @@ app.get('/user/:id/question', function(req, res){
             }
         })
     }
-    else if(bi){
+    else if(bi && ye && sc){
         console.log("대단원 검색");
-        Question.find({id:req.params.id, bi:req.params.bi}).sort({date:-1}).exec(function (error, data){
+        Question.find({id:req.params.id, bi:{$regex:".*"+bi+".*"}, ye:{$regex:".*"+ye+".*"}, sc:{$regex:".*"+sc+".*"},}).sort({date:-1}).exec(function (error, data){
+            if(error){
+                console.log(error);
+            }
+            else{
+                res.status(200).send({data:data});
+            }
+        })
+    }
+    else if(ye && sc){
+        console.log("학년 검색");
+        Question.find({id:req.params.id, ye:{$regex:".*"+ye+".*"}, sc:{$regex:".*"+sc+".*"},}).sort({date:-1}).exec(function (error, data){
+            if(error){
+                console.log(error);
+            }
+            else{
+                res.status(200).send({data:data});
+            }
+        })
+    }
+    else if(sc){
+        console.log("학교 검색")
+        Question.find({id:req.params.id, sc:{$regex:".*"+sc+".*"}}).sort({date:-1}).exec(function (error, data){
             if(error){
                 console.log(error);
             }
