@@ -940,7 +940,7 @@ app.get('/question/same', function(req, res){
     var sm = req.query.sm;
     var diff = req.query.diff;
     
-    Question.find({sim_x:sim_x, sim_y:sim_y, sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:diff}).exec(function (error, data){
+    Question.find({sim_x:sim_x, sim_y:sim_y, sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:diff, answer:{$ne:null}}).exec(function (error, data){
         if(error){
             console.log(error);
             res.status(500).send({err:error})
