@@ -9,6 +9,8 @@ var mongoose = require('mongoose');
 var FCM = require('fcm-node');
 var multer = require('multer');
 var fs = require('fs');
+var FormData = require('form-data');
+var path = require('path');
 var upload = multer({
     storage: multer.diskStorage({
         destination: function (req, file, cb){
@@ -929,6 +931,93 @@ app.post('/inferenceImage', upload.single("image"), function (req, res){
     });
 })
 
+app.get('/ssen/:file', function(req, res){
+    var dirUrl = '/home/gdrc/다운로드/쎈/1. 다항식의 연산/1.1. 다항식의 덧셈과 뺄셈'
+    
+    var file = req.params.file+'.jpg';
+    var ext = file.split('.');
+    // 홀수는 문제
+    if(ext[0]%2==1){
+        console.log(dirUrl);
+        console.log(file);
+        // console.log(ext[0])
+        var formData = {
+            file: {
+                value: fs.createReadStream(path.join(dirUrl, file)),
+                options: {
+                    filename: file,
+                    contentType: 'image/'+ext[1],
+                }
+            }
+        }
+        
+        request.post({url:'http://34.64.181.16:5000/image', formData: formData}, function optionalCallback(err, httpResponse, body){
+            if (err){
+                console.error(err);
+                res.send('IMAGE FAIL')
+            }
+            else{
+                d = JSON.parse(body);
+                console.log(d);
+                var qForm = {
+                    sc_p: d.sc_p,
+                    ye_p: d.ye_p,
+                    bi_p: d.bi_p,
+                    mi_p: d.mi_p,
+                    sc: d.sc,
+                    ye: d.ye,
+                    bi: d.bi,
+                    mi: d.mi,
+                    diff: d.diff,
+                    sim_x: d.sim_x,
+                    sim_y: d.sim_y,
+                    time: d.time,
+                    image: {
+                        value: fs.createReadStream(path.join(dirUrl, file)),
+                        options: {
+                            filename: file,
+                            contentType: 'image/'+ext[1],
+                        }
+                    },
+                    id: 'student1',
+                    answerType: '001',
+                    price: '500',
+                    answerTargetType: '0',
+                }
+                request.post({url:'http://34.64.105.2:8080/question', formData : qForm}, function optionalCallback(err, resp, body){
+                    if(resp.statusCode == 201){
+                        d = JSON.parse(body);
+                        var aForm = {
+                            file: {
+                                value: fs.createReadStream(path.join(dirUrl, (parseInt(ext[0])+1)+'.png')),
+                                options: {
+                                    filename: (parseInt(ext[0])+1)+'.png',
+                                    contentType: 'image/png'
+                                }
+                            },
+                            questionId:d.data._id,
+                            id:'tutor1'
+                        }
+                        request.post({url:'http://34.64.105.2:8080/answer', formData : aForm}, function optionalCallback(err, resp, body){
+                            if(resp.statusCode == 201){
+                                res.send(ext[0]);
+                            }
+                            else{
+                                res.send("FAIL");
+                            }
+                        })
+                    }
+                    
+                })
+            }
+        })
+
+        // console.log(file);
+    }
+    
+    // console.log(file);
+    
+})
 // 동일 문항 찾기
 app.get('/question/same', function(req, res){
     var sim_x = req.query.sim_x;
@@ -964,13 +1053,52 @@ app.get('/question/simillar', function(req, res){
     var sm = req.query.sm;
     var diff = req.query.diff;
     
-    Question.find({sim_x:sim_x, sim_y:sim_y, sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:diff}).exec(function (error, data){
+    Question.find({sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:diff}).exec(function (error, data){
         if(error){
             console.log(error);
             res.status(500).send({err:error})
         }
         else{
-            res.status(200).send({data:data});
+            dataArray=[];
+            for(i=0;i<data.length;i++){
+                console.log(i+"번째 비교");
+                console.log(sim_x + " && " + sim_y);
+                console.log(data[i].sim_x + " && " + data[i].sim_y + "@@");
+                if(data[i].sim_x == sim_x && data[i].sim_y == sim_y)
+                {
+                    console.log("유사문항을 찾으려는 문제와 동일함");
+                }
+                else{
+                    dataArray.push(data[i]);
+                    console.log("문항 추가됨");
+                }
+            }
+            const options = {
+                uri:'http://34.64.181.16:5000/simillar',
+                method: 'POST',
+                body:{
+                    q_data:{sim_x:sim_x, sim_y:sim_y},
+                    dataArray:dataArray,
+                },
+                json:true
+            };
+            
+            request.post(options,
+                function optionalCallback(err, httpResponse, body) {
+                if (err) {
+                    return console.error(err);
+                }
+                else{
+                    body.sort(function(a, b){
+                        return b.result - a.result;
+                    })
+                    console.log(body);
+                    res.status(200).send({data:body});
+                }
+                
+                // res.status(201).send({msg:body});
+            });
+            // res.status(200).send({data:data});
         }
     })
 })
@@ -986,29 +1114,68 @@ app.get('/question/deepen', function(req, res){
     var sm = req.query.sm;
     var diff = req.query.diff;
     
-    var deepen = "중";
-    if(diff == "하"){
-        deepen = "중";
+    var deepen = "1";
+    if(diff == "0"){
+        deepen = "1";
     }
-    else if(diff == "중"){
-        deepen = "상";
+    else if(diff == "1"){
+        deepen = "2";
     }
-    else if(diff == "상"){
-        deepen = "최상";
+    else if(diff == "2"){
+        deepen = "3";
     }
-    else if(diff == "최상"){
-        deepen = "최상";
+    else if(diff == "3"){
+        deepen = "3";
     }
-    Question.find({sim_x:sim_x, sim_y:sim_y, sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:deepen}).exec(function (error, data){
+    Question.find({sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:deepen}).exec(function (error, data){
         if(error){
             console.log(error);
             res.status(500).send({err:error})
         }
         else{
-            res.status(200).send({data:data});
+            dataArray=[];
+            for(i=0;i<data.length;i++){
+                console.log(i+"번째 비교");
+                console.log(sim_x + " && " + sim_y);
+                console.log(data[i].sim_x + " && " + data[i].sim_y + "@@");
+                if(data[i].sim_x == sim_x && data[i].sim_y == sim_y)
+                {
+                    console.log("심화문항을 찾으려는 문제와 동일함");
+                }
+                else{
+                    dataArray.push(data[i]);
+                    console.log("문항 추가됨");
+                }
+            }
+            const options = {
+                uri:'http://34.64.181.16:5000/simillar',
+                method: 'POST',
+                body:{
+                    q_data:{sim_x:sim_x, sim_y:sim_y},
+                    dataArray:dataArray,
+                },
+                json:true
+            };
+            
+            request.post(options,
+                function optionalCallback(err, httpResponse, body) {
+                if (err) {
+                    return console.error(err);
+                }
+                else{
+                    body.sort(function(a, b){
+                        return b.result - a.result;
+                    })
+                    console.log(body);
+                    res.status(200).send({data:body});
+                }
+                
+                // res.status(201).send({msg:body});
+            });
         }
     })
 })
+
 // 전체 질문보기 조회
 app.get('/question', function(req, res){    
     Question.find({}).exec(function (error, data){
@@ -1028,12 +1195,6 @@ app.get('/user/:id/question', function(req, res){
     var mi = req.query.mi;
     
     console.log(req.query);
-    // 현재 대단원, 중단원이 인공지능 예측 수행 시 String값으로 돌아옴.
-    // 인공지능 예측 결과 예시 bi: 1. 다항식의 연산 mi: 1.1. 다항식의 덧셈과 뺄셈
-    // 하지만 공통코드에서 내려주는 Tag는 bi: 다항식의 연산 mi: 다항식의 덧셈과 뺄셈 이런 식으로 나옴.
-    // equals 비교를 할 시, 동일하지 않으므로 contains 비교를 통해 임시로 결과를 돌려준 후, 차후 카테고리 코드 정보를 작성 후 포스텍에 공유하여
-    // 카테고리 코드값으로 주고 받게끔 수정이 필요할듯.
-
     if(mi && bi && ye && sc){
         console.log("중단원 검색");
         Question.find({id:req.params.id, mi:mi, bi:bi, ye:ye, sc:sc,}).sort({date:-1}).exec(function (error, data){
