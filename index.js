@@ -90,14 +90,12 @@ var question = mongoose.Schema({
     ye: String,
     bi: String,
     mi: String,
-    sm: String,
     diff: String,
     calcTime: String,
     sc_p: Number,
     ye_p: Number,
     bi_p: Number,
     mi_p: Number,
-    sm_p: Number,
     sim_x: Number,
     sim_y: Number
 });
@@ -833,7 +831,6 @@ var sc = [];
 var ye = [];
 var bi = [];
 var mi = [];
-var sm = [];
 app.get('/content/tutor/:id', function(req, res){
     var id = req.params.id;
 // 최신 컨텐츠 부분 상단 DB Schema 참조하여 코딩할것.
@@ -932,7 +929,7 @@ app.post('/inferenceImage', upload.single("image"), function (req, res){
 })
 
 app.get('/ssen/:file', function(req, res){
-    var dirUrl = '/home/gdrc/다운로드/쎈/1. 다항식의 연산/1.1. 다항식의 덧셈과 뺄셈'
+    var dirUrl = '/home/gdrc/다운로드/쎈/5. 여러 가지 방정식과 부등식/5.4. 이차부등식'
     
     var file = req.params.file+'.jpg';
     var ext = file.split('.');
@@ -954,7 +951,21 @@ app.get('/ssen/:file', function(req, res){
         request.post({url:'http://34.64.181.16:5000/image', formData: formData}, function optionalCallback(err, httpResponse, body){
             if (err){
                 console.error(err);
-                res.send('IMAGE FAIL')
+                if(err.errno==-2){
+                    console.log("no file error!!")
+                }
+                else{
+                    console.log("ANOTHER ERROR!!")
+                    res.end();
+                    // setTimeout(function(){
+                    //     // res.redirect('http://127.0.0.1:8080/ssen/'+(parseInt(ext[0])));
+                    //     res.statusCode=301;
+                    //     res.setHeader('Location','http://127.0.0.1:8080/ssen/'+(parseInt(ext[0])));
+                    //     res.end();
+                    // }, 3000)
+                    
+                }
+                
             }
             else{
                 d = JSON.parse(body);
@@ -1000,7 +1011,10 @@ app.get('/ssen/:file', function(req, res){
                         }
                         request.post({url:'http://34.64.105.2:8080/answer', formData : aForm}, function optionalCallback(err, resp, body){
                             if(resp.statusCode == 201){
-                                res.send(ext[0]);
+                                res.statusCode=301;
+                                res.setHeader('Location','http://127.0.0.1:8080/ssen/'+(parseInt(ext[0])+2));
+                                // res.redirect('http://127.0.0.1:8080/ssen/'+(parseInt(ext[0])+2));
+                                res.end();
                             }
                             else{
                                 res.send("FAIL");
@@ -1026,15 +1040,15 @@ app.get('/question/same', function(req, res){
     var ye = req.query.ye;
     var bi = req.query.bi;
     var mi = req.query.mi;
-    var sm = req.query.sm;
     var diff = req.query.diff;
     
-    Question.find({sim_x:sim_x, sim_y:sim_y, sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:diff, answer:{$ne:null}}).exec(function (error, data){
+    Question.find({sim_x:sim_x, sim_y:sim_y, sc:sc, ye:ye, bi:bi, mi:mi, diff:diff, answer:{$ne:null}}).exec(function (error, data){
         if(error){
             console.log(error);
             res.status(500).send({err:error})
         }
         else{
+            // console.log
             res.status(200).send({data:data});
         }
     })
@@ -1050,10 +1064,9 @@ app.get('/question/simillar', function(req, res){
     var ye = req.query.ye;
     var bi = req.query.bi;
     var mi = req.query.mi;
-    var sm = req.query.sm;
     var diff = req.query.diff;
     
-    Question.find({sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:diff}).exec(function (error, data){
+    Question.find({sc:sc, ye:ye, bi:bi, mi:mi, diff:diff}).exec(function (error, data){
         if(error){
             console.log(error);
             res.status(500).send({err:error})
@@ -1111,7 +1124,6 @@ app.get('/question/deepen', function(req, res){
     var ye = req.query.ye;
     var bi = req.query.bi;
     var mi = req.query.mi;
-    var sm = req.query.sm;
     var diff = req.query.diff;
     
     var deepen = "1";
@@ -1127,7 +1139,7 @@ app.get('/question/deepen', function(req, res){
     else if(diff == "3"){
         deepen = "3";
     }
-    Question.find({sc:sc, ye:ye, bi:bi, mi:mi, sm:sm, diff:deepen}).exec(function (error, data){
+    Question.find({sc:sc, ye:ye, bi:bi, mi:mi, diff:deepen}).exec(function (error, data){
         if(error){
             console.log(error);
             res.status(500).send({err:error})
@@ -1330,7 +1342,7 @@ app.post('/question', upload.single("image"), function (req, res){
     };
     
     var newQuestion = new Question({ id: fields.id, date:new Date().getTime(), imageName: req.file.filename, answer:[], answerType: fields.answerType, price: Number(fields.price),
-    sc: fields.sc, ye: fields.ye, bi: fields.bi, mi:fields.mi, sm: fields.sm, diff: fields.diff, calcTime: fields.calcTime, sc_p: fields.sc_p, ye_p: fields.ye_p, bi_p: fields.bi_p, mi_p:fields.mi_p, sm_p:fields.sm_p, sim_x:fields.sim_x, sim_y:fields.sim_y })
+    sc: fields.sc, ye: fields.ye, bi: fields.bi, mi:fields.mi, diff: fields.diff, calcTime: fields.calcTime, sc_p: fields.sc_p, ye_p: fields.ye_p, bi_p: fields.bi_p, mi_p:fields.mi_p, sim_x:fields.sim_x, sim_y:fields.sim_y })
     newQuestion.save(function (error, data) {
         if(error) {
             console.log(error);
