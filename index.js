@@ -1034,6 +1034,7 @@ app.get('/ssen/:file', function(req, res){
 })
 // 동일 문항 찾기
 app.get('/question/same', function(req, res){
+    console.log("IN SAME QUESTION API");
     var sim_x = req.query.sim_x;
     var sim_y = req.query.sim_y;
     var sc = req.query.sc;
@@ -1048,7 +1049,7 @@ app.get('/question/same', function(req, res){
             res.status(500).send({err:error})
         }
         else{
-            // console.log
+            console.log("IN SAME QUESTION API SEND RESP");
             res.status(200).send({data:data});
         }
     })
