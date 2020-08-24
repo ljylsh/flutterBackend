@@ -198,9 +198,27 @@ app.get('/answer-type', function(req, res){
 })
 
 var categoryArr = {
+    deepen:[
+        {
+            code:'0',
+            name:'하',
+        },
+        {
+            code:'1',
+            name:'중',
+        },
+        {
+            code:'2',
+            name:'상',
+        },
+        {
+            code:'3',
+            name:'최상',
+        }
+    ],
     sc:[
         {
-            code:'17', 
+            code:'0', 
             name:'고등',
             ye:[
                 {
@@ -734,72 +752,73 @@ var categoryArr = {
 }
 
 app.get('/category', function(req, res){
-    groupCode = req.query.groupCode;
-    groupName = req.query.groupName;
-    if(groupCode){
-        if(groupCode == "학교"){
-            scArr = [];
-            scArr.push({code:"0", name:"초등학교"});
-            scArr.push({code:"1", name:"중학교"});
-            scArr.push({code:"2", name:"고등학교"});
-            res.send(scArr);
-        }
-        else if(groupCode == "학년"){
-            yeArr = [];
-            if(groupName){
-                if(groupName == "고등학교"){
-                    yeArr.push({code:"0", name:"고1(상)"});
-                    yeArr.push({code:"1", name:"고1(하)"});
-                }
-            }
-            res.send(yeArr);
-        }
-        else if(groupCode == "대단원"){
-            biArr = [];
-            if(groupName){
-                if(groupName == "고1(상)"){
-                    biArr.push({code:"0", name:"다항식의 연산"});
-                    biArr.push({code:"1", name:"나머지정리와 인수분해"});
-                    biArr.push({code:"2", name:"복소수와 이차방정식"});
-                }
-            }
-            res.send(biArr);
-        }
-        else if(groupCode == "중단원"){
-            miArr = [];
-            if(groupName){
-                if(groupName == "다항식의 연산"){
-                    miArr.push({code:"0", name:"다항식의 덧셈과 뺄셈"});
-                    miArr.push({code:"1", name:"다항식의 곱셈과 나눗셈"});
-                }
-                else if(groupName == "나머지정리와 인수분해"){
-                    miArr.push({code:"0", name:"항등식"});
-                    miArr.push({code:"1", name:"나머지정리"});
-                    miArr.push({code:"2", name:"인수분해"});
-                }
-                else if(groupName == "복소수와 이차방정식"){
-                    miArr.push({code:"0", name:"복소수와 그 연산"});
-                    miArr.push({code:"1", name:"이차방정식"});
-                }
-                else if(groupName == "이차방정식과 이차함수"){
-                    miArr.push({code:"0", name:"이차방정식과 이차함수의 관계"});
-                    miArr.push({code:"1", name:"이차함수의 최대, 최소"});
-                }
-            }
-            res.send(miArr);
-        }
-        else if(groupCode == "난이도"){
-            levelArr=[];
-            levelArr.push({code:"0", name:"하"});
-            levelArr.push({code:"1", name:"중"});
-            levelArr.push({code:"2", name:"상"});
-            levelArr.push({code:"3", name:"최상"});
-            res.send(levelArr);
-        }
-    }
-    else{
-        res.send(categoryArr);
-    }
+    res.send(categoryArr);
+    // groupCode = req.query.groupCode;
+    // groupName = req.query.groupName;
+    // if(groupCode){
+    //     if(groupCode == "학교"){
+    //         scArr = [];
+    //         scArr.push({code:"0", name:"초등학교"});
+    //         scArr.push({code:"1", name:"중학교"});
+    //         scArr.push({code:"2", name:"고등학교"});
+    //         res.send(scArr);
+    //     }
+    //     else if(groupCode == "학년"){
+    //         yeArr = [];
+    //         if(groupName){
+    //             if(groupName == "고등학교"){
+    //                 yeArr.push({code:"0", name:"고1(상)"});
+    //                 yeArr.push({code:"1", name:"고1(하)"});
+    //             }
+    //         }
+    //         res.send(yeArr);
+    //     }
+    //     else if(groupCode == "대단원"){
+    //         biArr = [];
+    //         if(groupName){
+    //             if(groupName == "고1(상)"){
+    //                 biArr.push({code:"0", name:"다항식의 연산"});
+    //                 biArr.push({code:"1", name:"나머지정리와 인수분해"});
+    //                 biArr.push({code:"2", name:"복소수와 이차방정식"});
+    //             }
+    //         }
+    //         res.send(biArr);
+    //     }
+    //     else if(groupCode == "중단원"){
+    //         miArr = [];
+    //         if(groupName){
+    //             if(groupName == "다항식의 연산"){
+    //                 miArr.push({code:"0", name:"다항식의 덧셈과 뺄셈"});
+    //                 miArr.push({code:"1", name:"다항식의 곱셈과 나눗셈"});
+    //             }
+    //             else if(groupName == "나머지정리와 인수분해"){
+    //                 miArr.push({code:"0", name:"항등식"});
+    //                 miArr.push({code:"1", name:"나머지정리"});
+    //                 miArr.push({code:"2", name:"인수분해"});
+    //             }
+    //             else if(groupName == "복소수와 이차방정식"){
+    //                 miArr.push({code:"0", name:"복소수와 그 연산"});
+    //                 miArr.push({code:"1", name:"이차방정식"});
+    //             }
+    //             else if(groupName == "이차방정식과 이차함수"){
+    //                 miArr.push({code:"0", name:"이차방정식과 이차함수의 관계"});
+    //                 miArr.push({code:"1", name:"이차함수의 최대, 최소"});
+    //             }
+    //         }
+    //         res.send(miArr);
+    //     }
+    //     else if(groupCode == "난이도"){
+    //         levelArr=[];
+    //         levelArr.push({code:"0", name:"하"});
+    //         levelArr.push({code:"1", name:"중"});
+    //         levelArr.push({code:"2", name:"상"});
+    //         levelArr.push({code:"3", name:"최상"});
+    //         res.send(levelArr);
+    //     }
+    // }
+    // else{
+    //     res.send(categoryArr);
+    // }
 })
 
 app.get('/terms', function(req, res){
