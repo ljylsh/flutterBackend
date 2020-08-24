@@ -1036,7 +1036,7 @@ app.get('/user/:id/question', function(req, res){
 
     if(mi && bi && ye && sc){
         console.log("중단원 검색");
-        Question.find({id:req.params.id, mi:{$regex:".*"+mi+".*"}, bi:{$regex:".*"+bi+".*"}, ye:{$regex:".*"+ye+".*"}, sc:{$regex:".*"+sc+".*"},}).sort({date:-1}).exec(function (error, data){
+        Question.find({id:req.params.id, mi:mi, bi:bi, ye:ye, sc:sc,}).sort({date:-1}).exec(function (error, data){
             if(error){
                 console.log(error);
             }
@@ -1047,7 +1047,7 @@ app.get('/user/:id/question', function(req, res){
     }
     else if(bi && ye && sc){
         console.log("대단원 검색");
-        Question.find({id:req.params.id, bi:{$regex:".*"+bi+".*"}, ye:{$regex:".*"+ye+".*"}, sc:{$regex:".*"+sc+".*"},}).sort({date:-1}).exec(function (error, data){
+        Question.find({id:req.params.id, bi:bi, ye:ye, sc:sc,}).sort({date:-1}).exec(function (error, data){
             if(error){
                 console.log(error);
             }
@@ -1058,7 +1058,7 @@ app.get('/user/:id/question', function(req, res){
     }
     else if(ye && sc){
         console.log("학년 검색");
-        Question.find({id:req.params.id, ye:{$regex:".*"+ye+".*"}, sc:{$regex:".*"+sc+".*"},}).sort({date:-1}).exec(function (error, data){
+        Question.find({id:req.params.id, ye:ye, sc:sc,}).sort({date:-1}).exec(function (error, data){
             if(error){
                 console.log(error);
             }
@@ -1069,7 +1069,7 @@ app.get('/user/:id/question', function(req, res){
     }
     else if(sc){
         console.log("학교 검색")
-        Question.find({id:req.params.id, sc:{$regex:".*"+sc+".*"}}).sort({date:-1}).exec(function (error, data){
+        Question.find({id:req.params.id, sc:sc}).sort({date:-1}).exec(function (error, data){
             if(error){
                 console.log(error);
             }
@@ -1451,6 +1451,7 @@ app.post('/tutor', function(req, res){
     );
         
 })
+// 탑 튜터 30% 개발 필요함.
 app.get('/tutor/top/:sc', function(req, res){
     var sc = req.params.sc;
     var rankTop = [];
