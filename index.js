@@ -929,7 +929,7 @@ app.post('/inferenceImage', upload.single("image"), function (req, res){
 })
 
 app.get('/ssen/:file', function(req, res){
-    var dirUrl = '/home/gdrc/다운로드/쎈/5. 여러 가지 방정식과 부등식/5.4. 이차부등식'
+    var dirUrl = '/home/gdrc/다운로드/쎈/6. 평면좌표/6.1. 두 점 사이의 거리'
     
     var file = req.params.file+'.jpg';
     var ext = file.split('.');
@@ -1067,7 +1067,7 @@ app.get('/question/simillar', function(req, res){
     var mi = req.query.mi;
     var diff = req.query.diff;
     
-    Question.find({sc:sc, ye:ye, bi:bi, mi:mi, diff:diff}).exec(function (error, data){
+    Question.find({sc:sc, ye:ye, bi:bi, mi:mi, diff:diff, answer:{$ne:null}}).exec(function (error, data){
         if(error){
             console.log(error);
             res.status(500).send({err:error})
@@ -1140,7 +1140,7 @@ app.get('/question/deepen', function(req, res){
     else if(diff == "3"){
         deepen = "3";
     }
-    Question.find({sc:sc, ye:ye, bi:bi, mi:mi, diff:deepen}).exec(function (error, data){
+    Question.find({sc:sc, ye:ye, bi:bi, mi:mi, diff:deepen, answer:{$ne:null}}).exec(function (error, data){
         if(error){
             console.log(error);
             res.status(500).send({err:error})
