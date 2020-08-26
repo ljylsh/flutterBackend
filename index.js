@@ -929,7 +929,7 @@ app.post('/inferenceImage', upload.single("image"), function (req, res){
 })
 
 app.get('/ssen/:file', function(req, res){
-    var dirUrl = '/home/gdrc/다운로드/쎈/6. 평면좌표/6.1. 두 점 사이의 거리'
+    var dirUrl = '/home/gdrc/다운로드/쎈/8. 원의 방정식/8.1. 원의 방정식'
     
     var file = req.params.file+'.jpg';
     var ext = file.split('.');
@@ -1049,8 +1049,55 @@ app.get('/question/same', function(req, res){
             res.status(500).send({err:error})
         }
         else{
-            console.log("IN SAME QUESTION API SEND RESP");
-            res.status(200).send({data:data});
+            dataArray=[];
+            for(i=0;i<data.length;i++){
+                console.log(i+"번째 비교");
+                console.log(sim_x + " && " + sim_y);
+                console.log(data[i].sim_x + " && " + data[i].sim_y + "@@");
+                // if(data[i].sim_x == sim_x && data[i].sim_y == sim_y)
+                // {
+                //     console.log("동일문항을 찾으려는 문제와 동일함");
+                // }
+                // else{
+                //     dataArray.push(data[i]);
+                //     console.log("문항 추가됨");
+                // }
+
+                // 동일 문제도 찾아와야하기때문에 분기점 안줌.
+                dataArray.push(data[i]);
+            }
+            const options = {
+                uri:'http://34.64.181.16:5000/simillar',
+                method: 'POST',
+                body:{
+                    q_data:{sim_x:sim_x, sim_y:sim_y},
+                    dataArray:dataArray,
+                },
+                json:true
+            };
+            
+            request.post(options,
+                function optionalCallback(err, httpResponse, body) {
+                if (err) {
+                    return console.error(err);
+                }
+                else{
+                    body.sort(function(a, b){
+                        return b.result - a.result;
+                    })
+                    console.log(body);
+                    var resultArr = [];
+                    for(i=0;i<body.length;i++){
+                        if(body[i].result >= 0.99){
+                            resultArr.push(body[i]);
+                        }
+                    }
+                    res.status(200).send({data:resultArr});
+                }
+                
+                // res.status(201).send({msg:body});
+            });
+            // res.status(200).send({data:data});
         }
     })
 })
@@ -1107,7 +1154,13 @@ app.get('/question/simillar', function(req, res){
                         return b.result - a.result;
                     })
                     console.log(body);
-                    res.status(200).send({data:body});
+                    var resultArr = [];
+                    for(i=0;i<body.length;i++){
+                        if(body[i].result < 0.99){
+                            resultArr.push(body[i]);
+                        }
+                    }
+                    res.status(200).send({data:resultArr});
                 }
                 
                 // res.status(201).send({msg:body});
