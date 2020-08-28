@@ -21,23 +21,19 @@ var upload = multer({
         }
     }),
 });
+// JSON CONFIG로 차 후 변경
 var fcm = new FCM("AAAAAoow1E0:APA91bHBVS6Ap3mw-22Pht_MF7gOCTncmdUd9N7JRKJUnLj_8rkssZUqhvGZvHF-MORZReFLG8lfrG5l5PhkrjoKdIQAr6Zcrrl1BWINpeFIqntcHdeJX4ojTphHlhNddNuv1xmewQpV");
 
 var tokenList = [{}];
 // mongoose.connect('mongodb://gdrc:k3263969@localhost:27017/mathtwo');
+// BACKEND 서버 내 DB 설치로 차 후 변경
 mongoose.connect('mongodb://gdrc:k3263969@ds221292.mlab.com:21292/heroku_h9mwh8px');
 var db = mongoose.connection;
 db.on('error', console.error);
 db.once('open', function () {
 });
 
-// var answer = mongoose.Schema({
-//     id: String,
-//     question_id: String,
-//     imageName: String,
-//     date: Date,
-// });
-// var Answer = mongoose.model('answer', answer);
+// DB 스키마 소스코드 차 후 분리
 var user = mongoose.Schema({
     id: {type: String, unique: true},
     password: String,
@@ -101,6 +97,7 @@ var question = mongoose.Schema({
 });
 var Question = mongoose.model('question', question);
 
+// socket.io 채팅 모듈 분리
 io.on("connection", (userSocket) => {
     console.log('user connected');
     userSocket.on("send_message", (data) => {
@@ -116,6 +113,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.use('/uploads', express.static('uploads'));
 
+// JSON CONFIG 차 후 변경
 var bank=[];
 bank.push({code:'003', name:'기업은행'});
 bank.push({code:'004', name:'KB국민은행'});
@@ -185,18 +183,22 @@ bank.push({code:'289', name:'NH농협증권'});
 bank.push({code:'290', name:'부국증권'});
 bank.push({code:'291', name:'신영증권'});
 bank.push({code:'292', name:'LIG투자증권'});
+
 app.get('/bank', function(req, res){
     res.send(bank);
 })
 
+// JSON CONFIG 차 후 분리
 var answer=[];
 answer.push({code:'001', name:'문제해설지', price:500});
 answer.push({code:'002', name:'문제풀이동영상', price:1000});
 answer.push({code:'003', name:'화상과외', price:2000});
+
 app.get('/answer-type', function(req, res){
     res.send(answer);
 })
 
+// JSON CONFIG 차 후 분리 및 기타 수학교육과정 추가 필요(AI서버도 동일파일 로딩)
 var categoryArr = {
     deepen:[
         {
@@ -753,72 +755,6 @@ var categoryArr = {
 
 app.get('/category', function(req, res){
     res.send(categoryArr);
-    // groupCode = req.query.groupCode;
-    // groupName = req.query.groupName;
-    // if(groupCode){
-    //     if(groupCode == "학교"){
-    //         scArr = [];
-    //         scArr.push({code:"0", name:"초등학교"});
-    //         scArr.push({code:"1", name:"중학교"});
-    //         scArr.push({code:"2", name:"고등학교"});
-    //         res.send(scArr);
-    //     }
-    //     else if(groupCode == "학년"){
-    //         yeArr = [];
-    //         if(groupName){
-    //             if(groupName == "고등학교"){
-    //                 yeArr.push({code:"0", name:"고1(상)"});
-    //                 yeArr.push({code:"1", name:"고1(하)"});
-    //             }
-    //         }
-    //         res.send(yeArr);
-    //     }
-    //     else if(groupCode == "대단원"){
-    //         biArr = [];
-    //         if(groupName){
-    //             if(groupName == "고1(상)"){
-    //                 biArr.push({code:"0", name:"다항식의 연산"});
-    //                 biArr.push({code:"1", name:"나머지정리와 인수분해"});
-    //                 biArr.push({code:"2", name:"복소수와 이차방정식"});
-    //             }
-    //         }
-    //         res.send(biArr);
-    //     }
-    //     else if(groupCode == "중단원"){
-    //         miArr = [];
-    //         if(groupName){
-    //             if(groupName == "다항식의 연산"){
-    //                 miArr.push({code:"0", name:"다항식의 덧셈과 뺄셈"});
-    //                 miArr.push({code:"1", name:"다항식의 곱셈과 나눗셈"});
-    //             }
-    //             else if(groupName == "나머지정리와 인수분해"){
-    //                 miArr.push({code:"0", name:"항등식"});
-    //                 miArr.push({code:"1", name:"나머지정리"});
-    //                 miArr.push({code:"2", name:"인수분해"});
-    //             }
-    //             else if(groupName == "복소수와 이차방정식"){
-    //                 miArr.push({code:"0", name:"복소수와 그 연산"});
-    //                 miArr.push({code:"1", name:"이차방정식"});
-    //             }
-    //             else if(groupName == "이차방정식과 이차함수"){
-    //                 miArr.push({code:"0", name:"이차방정식과 이차함수의 관계"});
-    //                 miArr.push({code:"1", name:"이차함수의 최대, 최소"});
-    //             }
-    //         }
-    //         res.send(miArr);
-    //     }
-    //     else if(groupCode == "난이도"){
-    //         levelArr=[];
-    //         levelArr.push({code:"0", name:"하"});
-    //         levelArr.push({code:"1", name:"중"});
-    //         levelArr.push({code:"2", name:"상"});
-    //         levelArr.push({code:"3", name:"최상"});
-    //         res.send(levelArr);
-    //     }
-    // }
-    // else{
-    //     res.send(categoryArr);
-    // }
 })
 
 app.get('/terms', function(req, res){
@@ -831,16 +767,8 @@ var sc = [];
 var ye = [];
 var bi = [];
 var mi = [];
-app.get('/content/tutor/:id', function(req, res){
-    var id = req.params.id;
-// 최신 컨텐츠 부분 상단 DB Schema 참조하여 코딩할것.
 
-    // 해당 ID의 튜터 목록을 조회.
-    // 조회 후 해당 튜터들의 컨텐츠를 Date 최신순으로 5개 받아오기.
-    // params로 Count를 받아, 스크롤 추가 할 시 Count 더 해서 잘라 return하기.
-    // 현재는 그냥 임의의 Video 돌려주기.
-})
-
+// ID 중복 확인
 app.get('/user/validation/:id', function(req, res){
     User.findOne({id:req.params.id}).exec(function (error, data){
         if(error){
@@ -907,27 +835,24 @@ app.post('/user/:id', function(req, res){
 })
 
 
-// 새로운 질문에 대한 알람 기능은 FCM으로 진행하는게 맞을 듯.
-// 새로운 문제가 나올 때 마다 해당하는 관심 카테고리의 튜터들에게 FCM PUSH를 보내고, 
-// 접속 시에 question별 transaction을 체크 해 관심 카테고리 영역 내에 transaction이 걸리지 않은 (즉, 답변을 누군가가 달고 있거나 이미 달리지 않은) 문제가 있을 경우 알람에 NEW를 띄워주게끔.
+// // AI SERVER로 문제에 대한 카테고리 분류 정보 획득
+// app.post('/inferenceImage', upload.single("image"), function (req, res){
+//     console.log("inferenceImage");
+//     var image = req.image;
+//     var formData = {
+//         file: fs.createReadStream("uploads/"+req.file.filename),
+//     };
 
-// AI SERVER로 문제에 대한 카테고리 분류 정보 획득
-app.post('/inferenceImage', upload.single("image"), function (req, res){
-    console.log("inferenceImage");
-    var image = req.image;
-    var formData = {
-        file: fs.createReadStream("uploads/"+req.file.filename),
-    };
+//     request.post({url:'http://34.64.181.16:5000/image', formData: formData}, function optionalCallback(err, httpResponse, body) {
+//         if (err) {
+//           return console.error('upload failed:', err);
+//         }
+//         console.log('Upload successful!  Server responded with:', body);
+//         res.status(201).send({msg:body});
+//     });
+// })
 
-    request.post({url:'http://34.64.181.16:5000/image', formData: formData}, function optionalCallback(err, httpResponse, body) {
-        if (err) {
-          return console.error('upload failed:', err);
-        }
-        console.log('Upload successful!  Server responded with:', body);
-        res.status(201).send({msg:body});
-    });
-})
-
+// 임시 문제/답변파일 업로드 스크립트
 app.get('/ssen/:file', function(req, res){
     var dirUrl = '/home/gdrc/다운로드/쎈/8. 원의 방정식/8.1. 원의 방정식'
     
@@ -1032,6 +957,8 @@ app.get('/ssen/:file', function(req, res){
     // console.log(file);
     
 })
+
+// 동일 / 유사 / 심화 문항 Cosine Similarity Search 개선 필요. 2차원->차원 추가 예정. DB 서칭 알고리즘 수정. 
 // 동일 문항 찾기
 app.get('/question/same', function(req, res){
     console.log("IN SAME QUESTION API");
@@ -1054,16 +981,6 @@ app.get('/question/same', function(req, res){
                 console.log(i+"번째 비교");
                 console.log(sim_x + " && " + sim_y);
                 console.log(data[i].sim_x + " && " + data[i].sim_y + "@@");
-                // if(data[i].sim_x == sim_x && data[i].sim_y == sim_y)
-                // {
-                //     console.log("동일문항을 찾으려는 문제와 동일함");
-                // }
-                // else{
-                //     dataArray.push(data[i]);
-                //     console.log("문항 추가됨");
-                // }
-
-                // 동일 문제도 찾아와야하기때문에 분기점 안줌.
                 dataArray.push(data[i]);
             }
             const options = {
@@ -1095,16 +1012,13 @@ app.get('/question/same', function(req, res){
                     res.status(200).send({data:resultArr});
                 }
                 
-                // res.status(201).send({msg:body});
             });
-            // res.status(200).send({data:data});
         }
     })
 })
 
 // 유사 문항 찾기
-// 유사문항 sim_x와 sim_y값의 범위를 어떻게 줘야할 지 강성구 연구원에게 물어봐야함.
-// 쌍둥이 문제의 경우 sim_x와 sim_y의 값이 어느정도 편차가 있는지 확인하고 오차범위를 설정해야할듯?
+// stressed hold check. 1차 범위 추론 값 0.99
 app.get('/question/simillar', function(req, res){
     var sim_x = req.query.sim_x;
     var sim_y = req.query.sim_y;
@@ -1122,9 +1036,6 @@ app.get('/question/simillar', function(req, res){
         else{
             dataArray=[];
             for(i=0;i<data.length;i++){
-                console.log(i+"번째 비교");
-                console.log(sim_x + " && " + sim_y);
-                console.log(data[i].sim_x + " && " + data[i].sim_y + "@@");
                 if(data[i].sim_x == sim_x && data[i].sim_y == sim_y)
                 {
                     console.log("유사문항을 찾으려는 문제와 동일함");
@@ -1162,10 +1073,7 @@ app.get('/question/simillar', function(req, res){
                     }
                     res.status(200).send({data:resultArr});
                 }
-                
-                // res.status(201).send({msg:body});
             });
-            // res.status(200).send({data:data});
         }
     })
 })
@@ -1201,9 +1109,6 @@ app.get('/question/deepen', function(req, res){
         else{
             dataArray=[];
             for(i=0;i<data.length;i++){
-                console.log(i+"번째 비교");
-                console.log(sim_x + " && " + sim_y);
-                console.log(data[i].sim_x + " && " + data[i].sim_y + "@@");
                 if(data[i].sim_x == sim_x && data[i].sim_y == sim_y)
                 {
                     console.log("심화문항을 찾으려는 문제와 동일함");
@@ -1253,6 +1158,7 @@ app.get('/question', function(req, res){
         }
     })
 })
+
 // 본인 질문 최신순 보기
 app.get('/user/:id/question', function(req, res){
     var sc = req.query.sc;
@@ -1626,8 +1532,8 @@ app.get('/user/:id/content', function(req, res){
         }
     })
 })
-// 메인화면 컨텐츠 좋아요 / 댓글 기능 구현 필요함. 시연 이후!
 
+// 메인화면 컨텐츠 좋아요 / 댓글 기능 구현 필요. 시연 이후
 app.post('/user/:id/content', upload.single("file"), function(req, res){
     var id = req.params.id;
     var fileType=0;
@@ -1676,9 +1582,9 @@ app.post('/tutor', function(req, res){
 
         }
     );
-        
 })
-// 탑 튜터 30% 개발 필요함.
+
+// 탑 튜터 30% 이내 서칭 수정 필요. 시연까지 dummy data.
 app.get('/tutor/top/:sc', function(req, res){
     var sc = req.params.sc;
     var rankTop = [];
@@ -1687,6 +1593,7 @@ app.get('/tutor/top/:sc', function(req, res){
     }
     res.send(rankTop);
 })
+
 app.get('/tutor/:id', function(req, res){
     var id = req.params.id;
     User.findOne({id:id}).exec(function(error, data){
@@ -1706,36 +1613,6 @@ app.get('/tutor/:id', function(req, res){
         }
     })
 })
-
-
-// app.get('/qna', function(req, res){
-//     Question.find().exec(function (error, datas) {
-//         if(error) {
-//             console.log(error);
-//             res.status(500).send({error:'read failed'});
-//         }
-//         else{
-//             console.log("qna find" + datas);
-//             for(i=0;i<datas.length;i++){
-//                 console.log(datas[i].answers.length);
-//             }
-//             res.json({datas});
-//         }
-//     })
-// })
-// app.get('/question', function(req, res){
-//     Question.find().exec(function (error, datas) {
-//         if(error) {
-//             console.log(error);
-//             res.status(500).send({error:'read failed'});
-//         }
-//         else{
-//             console.log("question find" + datas);
-//             res.json({datas});
-//         }
-//     })
-// })
-
 
 // FCM PUSH를 위한 token 수집
 app.post('/token', function(req, res){
